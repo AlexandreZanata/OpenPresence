@@ -392,15 +392,15 @@ Manual verification (Gradle check + PunchState contract):
 - `golangci-lint`, `cargo clippy`, `ktlint` (when configured)
 - No commit without running affected test suite
 
-## Master business-rules runner (local)
-
-After `./scripts/setup-local-ai.sh`, run all repo verification scripts in one pass:
+## Master business-rules runner
 
 ```bash
-./.local/scripts/verify-all-business-rules.sh           # unit + integration (Docker)
-./.local/scripts/verify-all-business-rules.sh --quick   # domain/unit only (no Docker)
-./.local/scripts/verify-all-business-rules.sh --e2e     # full + per-phase E2E run.sh stubs
+./scripts/verify-all-business-rules.sh           # unit + integration (Docker)
+./scripts/verify-all-business-rules.sh --quick   # domain/unit only (no Docker)
+./scripts/verify-all-business-rules.sh --e2e     # full + E2E phases + BR report
 ```
+
+See `docs/E2E-MASTER-SUITE.md` for phase map, flags (`--fail-fast`, `--continue-on-error`), and N/A rules. Report: `.local/reports/e2e-last-run.md`.
 
 Coverage matrix (local): `.local/phases/e2e-testing/BUSINESS-RULES-COVERAGE.md`.
 

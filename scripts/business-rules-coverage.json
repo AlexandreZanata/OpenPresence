@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "description": "28 business rules / cross-cutting concerns for E2E master suite reporting",
+  "rules": [
+    {"id": "BR-001", "title": "Minimum enrollment angles", "status": "automated", "phases": ["e2e-01-enrollment"], "scripts": ["verify-enrollment.sh"]},
+    {"id": "BR-002", "title": "Liveness on enrollment", "status": "automated", "phases": ["e2e-01-enrollment", "e2e-08-biometric-stack"], "scripts": ["verify-enrollment.sh", "verify-biometric-e2e.sh"]},
+    {"id": "BR-003", "title": "Image quality on enrollment", "status": "automated", "phases": ["e2e-01-enrollment"], "scripts": ["verify-enrollment.sh"]},
+    {"id": "BR-004", "title": "Administrator-only enrollment", "status": "na", "phases": ["e2e-01-enrollment"], "reason": "Requires REST admin auth (not implemented)"},
+    {"id": "BR-005", "title": "Maximum embeddings", "status": "na", "phases": ["e2e-01-enrollment"], "reason": "Requires enrollment admin API (not implemented)"},
+    {"id": "BR-006", "title": "Deactivation retention", "status": "na", "phases": ["e2e-01-enrollment"], "reason": "Requires employee lifecycle API (not implemented)"},
+    {"id": "BR-010", "title": "Valid punch criteria", "status": "automated", "phases": ["e2e-02-punch-core", "e2e-08-biometric-stack", "e2e-09-submit-punch-stack", "e2e-11-full-uc001"], "scripts": ["verify-punch-usecase.sh", "verify-biometric-e2e.sh", "verify-punch-stack-e2e.sh", "verify-uc001-e2e.sh"]},
+    {"id": "BR-011", "title": "Offline punch TTL", "status": "automated", "phases": ["e2e-02-punch-core", "e2e-11-full-uc001"], "scripts": ["verify-punch-usecase.sh", "verify-uc001-e2e.sh"]},
+    {"id": "BR-012", "title": "Suspicious punch", "status": "automated", "phases": ["e2e-04-fraud"], "scripts": ["verify-fraud-e2e.sh"]},
+    {"id": "BR-013", "title": "Device lockout", "status": "automated", "phases": ["e2e-04-fraud"], "scripts": ["verify-fraud-e2e.sh"]},
+    {"id": "BR-014", "title": "Punch type sequence", "status": "automated", "phases": ["e2e-02-punch-core", "e2e-09-submit-punch-stack"], "scripts": ["verify-punch-usecase.sh", "verify-punch-stack-e2e.sh"]},
+    {"id": "BR-015", "title": "Official timestamp", "status": "automated", "phases": ["e2e-02-punch-core"], "scripts": ["verify-punch-usecase.sh"]},
+    {"id": "BR-020", "title": "Circle geofence", "status": "automated", "phases": ["e2e-03-geofence"], "scripts": ["verify-geofence-e2e.sh"]},
+    {"id": "BR-021", "title": "Polygon geofence", "status": "automated", "phases": ["e2e-03-geofence"], "scripts": ["verify-geofence-e2e.sh"]},
+    {"id": "BR-022", "title": "Low GPS accuracy", "status": "automated", "phases": ["e2e-03-geofence", "e2e-04-fraud"], "scripts": ["verify-geofence-e2e.sh", "verify-fraud-e2e.sh"]},
+    {"id": "BR-023", "title": "Multiple zones", "status": "automated", "phases": ["e2e-03-geofence", "e2e-09-submit-punch-stack"], "scripts": ["verify-geofence-e2e.sh", "verify-punch-stack-e2e.sh"]},
+    {"id": "BR-024", "title": "Temporary zones", "status": "automated", "phases": ["e2e-03-geofence"], "scripts": ["verify-geofence-e2e.sh"]},
+    {"id": "BR-030", "title": "Worked time calculation", "status": "automated", "phases": ["e2e-05-work-schedule"], "scripts": ["verify-work-schedule-e2e.sh"]},
+    {"id": "BR-031", "title": "Lateness", "status": "automated", "phases": ["e2e-05-work-schedule"], "scripts": ["verify-work-schedule-e2e.sh"]},
+    {"id": "BR-032", "title": "Overtime", "status": "automated", "phases": ["e2e-05-work-schedule"], "scripts": ["verify-work-schedule-e2e.sh"]},
+    {"id": "BR-033", "title": "Split shifts", "status": "automated", "phases": ["e2e-05-work-schedule"], "scripts": ["verify-work-schedule-e2e.sh"]},
+    {"id": "BR-034", "title": "Time bank", "status": "automated", "phases": ["e2e-05-work-schedule"], "scripts": ["verify-work-schedule-e2e.sh"]},
+    {"id": "SEC-RLS", "title": "Multi-tenant RLS", "status": "automated", "phases": ["e2e-07-rls-security"], "scripts": ["verify-rls-e2e.sh"]},
+    {"id": "SEC-ABAC", "title": "ABAC manager subtree", "status": "automated", "phases": ["e2e-06-authorization"], "scripts": ["verify-authorization-e2e.sh"]},
+    {"id": "SEC-CROSS-TENANT", "title": "Cross-tenant punch denied", "status": "automated", "phases": ["e2e-07-rls-security", "e2e-09-submit-punch-stack"], "scripts": ["verify-rls-e2e.sh", "verify-punch-stack-e2e.sh"]},
+    {"id": "SEC-BIOMETRIC-STUB", "title": "Biometric stub path", "status": "automated", "phases": ["e2e-08-biometric-stack"], "scripts": ["verify-biometric-e2e.sh"]},
+    {"id": "SEC-MOBILE", "title": "Mobile punch flow", "status": "automated", "phases": ["e2e-10-mobile-kmp"], "scripts": ["verify-mobile-e2e.sh"]},
+    {"id": "SEC-UC001", "title": "UC-001 full clock-in", "status": "automated", "phases": ["e2e-11-full-uc001"], "scripts": ["verify-uc001-e2e.sh"]}
+  ],
+  "optional": [
+    {"id": "SEC-BIOMETRIC-ONNX", "title": "Biometric ONNX path", "phases": ["e2e-08-biometric-stack"], "scripts": ["verify-biometric-e2e.sh"], "note": "Requires ./models (gitignored)"}
+  ]
+}
