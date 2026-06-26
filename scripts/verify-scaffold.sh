@@ -49,7 +49,8 @@ if ! command -v go >/dev/null 2>&1; then
 else
   GO_VER="$(go version)"
   pass "go installed: $GO_VER"
-  if go version | grep -qE 'go1\.(22|23|24)'; then
+  GO_MINOR="$(go version | sed -nE 's/.*go1\.([0-9]+).*/\1/p')"
+  if [[ -n "$GO_MINOR" ]] && [[ "$GO_MINOR" -ge 22 ]]; then
     pass "go version >= 1.22"
   else
     fail "go version must be >= 1.22 (got: $GO_VER)"

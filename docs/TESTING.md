@@ -232,3 +232,17 @@ Manual verification (Gradle check + PunchState contract):
 - Domain coverage ≥ 90%
 - `golangci-lint`, `cargo clippy`, `ktlint` (when configured)
 - No commit without running affected test suite
+
+## Master business-rules runner (local)
+
+After `./scripts/setup-local-ai.sh`, run all repo verification scripts in one pass:
+
+```bash
+./.local/scripts/verify-all-business-rules.sh           # unit + integration (Docker)
+./.local/scripts/verify-all-business-rules.sh --quick   # domain/unit only (no Docker)
+./.local/scripts/verify-all-business-rules.sh --e2e     # full + per-phase E2E run.sh stubs
+```
+
+Coverage matrix (local): `.local/phases/e2e-testing/BUSINESS-RULES-COVERAGE.md`.
+
+Prerequisites: Go ≥ 1.22, Rust/Cargo (biometric), Docker (RLS + SubmitPunch integration), Gradle/JDK (mobile). ONNX models optional via `./scripts/download-models.sh`.
