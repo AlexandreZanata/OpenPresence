@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package openpresence.biometric.v1;
+
+service BiometricService {
+  rpc VerifyPunch(VerifyPunchRequest) returns (VerifyPunchResponse);
+  rpc EnrollFace(EnrollFaceRequest) returns (EnrollFaceResponse);
+  rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse);
+}
+
+message FraudFlag {
+  string fraud_type = 1;
+  string severity = 2;
+  string metadata_json = 3;
+}
+
+message VerifyPunchRequest {
+  bytes frame_jpeg = 1;
+  string employee_id = 2;
+  string tenant_id = 3;
+}
+
+message VerifyPunchResponse {
+  bool is_live = 1;
+  float liveness_score = 2;
+  bool is_recognized = 3;
+  float recognition_confidence = 4;
+  string matched_employee_id = 5;
+  repeated FraudFlag fraud_flags = 6;
+  bytes embedding = 7;
+}
+
+message EnrollFaceRequest {
+  bytes frame_jpeg = 1;
+  string employee_id = 2;
+  string tenant_id = 3;
+  string angle = 4;
+}
+
+message EnrollFaceResponse {
+  bool is_live = 1;
+  float liveness_score = 2;
+  float quality_score = 3;
+  bytes embedding = 4;
+  repeated FraudFlag fraud_flags = 5;
+}
+
+message DeleteProfileRequest {
+  string employee_id = 1;
+  string tenant_id = 2;
+}
+
+message DeleteProfileResponse {
+  bool success = 1;
+}

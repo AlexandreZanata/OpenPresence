@@ -1,6 +1,6 @@
 # Task 01 — Biometric service (Rust)
 
-**Status:** pending  
+**Status:** done  
 **Phase ID:** task-01-biometric-service
 
 ## Goal

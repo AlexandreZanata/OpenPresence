@@ -7,6 +7,9 @@ TDD pyramid: **75% unit / 20% integration / 5% E2E**. Domain layer ≥ **90% cov
 ```
 services/attendance/
   internal/domain/...     *_test.go     # unit — no DB
+services/biometric/
+  src/pipeline/           #[cfg(test)]  # unit — math, preprocess
+  tests/                  grpc_integration.rs
   internal/application/   *_test.go     # unit with mocked ports
   tests/integration/      *_test.go     # real DB (testcontainers)
 mobile/shared/
@@ -40,13 +43,22 @@ Write geofence tests **before** implementation (TDD). See AGENT Task 02.
 
 ## Biometric tests (Rust)
 
+Implemented in `services/biometric/`:
+
 | Test | Expectation |
 |------|-------------|
 | `test_liveness_real_face_above_threshold` | is_live = true |
 | `test_liveness_printed_photo_rejected` | is_live = false |
 | `test_face_recognition_same_person` | similarity >= 0.75 |
 | `test_face_recognition_different_persons` | similarity < 0.65 |
-| `test_adaptive_threshold_cold_start` | uses base 0.75 when history < 5 |
+| `test_cosine_similarity_identical_vectors` | similarity = 1.0 |
+| `grpc_verify_punch_and_enroll_roundtrip` | integration — live gRPC server |
+
+Manual verification (starts server, curls health, checks gRPC port):
+
+```bash
+./scripts/verify-biometric.sh
+```
 
 ## Integration tests — Punch API
 

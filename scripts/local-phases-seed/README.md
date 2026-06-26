@@ -6,7 +6,7 @@ Each subfolder is **one task**. Work one folder at a time until every step in `t
 
 **Current:** [`task-02-geofence-engine`](task-02-geofence-engine/)
 
-Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/)
+Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/), [`task-01-biometric-service`](task-01-biometric-service/)
 
 ## Folder layout (every task)
 
@@ -30,7 +30,7 @@ Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/)
 |--------|--------|-------------|
 | `task-00-monorepo-scaffold` | done | Go module + `services/attendance` skeleton |
 | `task-02-geofence-engine` | **active** | Domain geofence (TDD) — BR-020–BR-024 |
-| `task-01-biometric-service` | pending | Rust gRPC biometric service |
+| `task-01-biometric-service` | done | Rust gRPC biometric service |
 | `task-03-punch-viewmodel` | pending | KMP PunchViewModel |
 | `task-04-row-level-security` | pending | PostgreSQL RLS multi-tenant |
 

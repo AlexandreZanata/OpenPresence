@@ -61,6 +61,18 @@ CameraFrame (JPEG/WebP)
 
 **Note:** pgvector search runs in Go (Attendance Service). Biometric Service returns embedding; Go queries the database.
 
+## Development without ONNX weights
+
+`services/biometric` runs in **stub mode** when `ONNX_MODELS_PATH` is unset (`BIOMETRIC_USE_STUB=true`):
+
+- Pipeline math and preprocess functions are exercised with real JPEG decode
+- gRPC `VerifyPunch` / `EnrollFace` return deterministic embeddings for integration tests
+- Full ONNX inference: `cargo build --features onnx` with models in `models/`
+
+```bash
+./scripts/verify-biometric.sh
+```
+
 ## Model files (not in git)
 
 Store under `models/` locally:

@@ -27,3 +27,6 @@ coverage/
 
 # ONNX model weights (download separately — see docs/BIOMETRICS.md)
 models/
+
+# Rust build artifacts
+**/target/

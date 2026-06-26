@@ -1,0 +1,40 @@
+[package]
+name = "biometric-service"
+version = "0.1.0"
+edition = "2021"
+description = "OpenPresence biometric gRPC service (liveness + face embedding)"
+
+[lib]
+name = "biometric_service"
+path = "src/lib.rs"
+
+[[bin]]
+name = "biometric-server"
+path = "src/bin/server.rs"
+
+[features]
+default = []
+onnx = ["dep:ort", "dep:ndarray"]
+
+[dependencies]
+axum = "0.7"
+image = "0.25"
+prost = "0.13"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal"] }
+tonic = "0.12"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ort = { version = "2.0.0-rc.12", optional = true }
+ndarray = { version = "0.16", optional = true }
+
+[build-dependencies]
+protoc-bin-vendored = "3"
+tonic-build = "0.12"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio-stream = "0.1"
+tonic = "0.12"

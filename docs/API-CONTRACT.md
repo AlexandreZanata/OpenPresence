@@ -143,6 +143,32 @@ message VerifyPunchResponse {
   repeated FraudFlag fraud_flags = 6;
   bytes embedding = 7;  // internal only — never exposed on REST
 }
+
+message EnrollFaceRequest {
+  bytes frame_jpeg = 1;
+  string employee_id = 2;
+  string tenant_id = 3;
+  string angle = 4;  // FRONTAL | LEFT_15 | RIGHT_15
+}
+
+message EnrollFaceResponse {
+  bool is_live = 1;
+  float liveness_score = 2;
+  float quality_score = 3;
+  bytes embedding = 4;
+  repeated FraudFlag fraud_flags = 5;
+}
+
+message DeleteProfileRequest {
+  string employee_id = 1;
+  string tenant_id = 2;
+}
+
+message DeleteProfileResponse {
+  bool success = 1;
+}
 ```
+
+Proto source: `services/biometric/proto/biometric.proto`
 
 **Security:** REST responses expose `faceEmbeddingHash` only, never raw embedding (see [SECURITY.md](SECURITY.md)).
