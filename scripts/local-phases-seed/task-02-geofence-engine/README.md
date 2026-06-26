@@ -1,6 +1,6 @@
 # Task 02 — Geofence engine (Go domain)
 
-**Status:** active  
+**Status:** done  
 **Phase ID:** task-02-geofence-engine
 
 ## Goal

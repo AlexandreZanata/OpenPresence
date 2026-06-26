@@ -28,6 +28,7 @@ Full documentation index: **[docs/README.md](docs/README.md)**
 pip install -r agent-harness/requirements.txt
 ./scripts/setup-local-ai.sh
 ./scripts/verify-scaffold.sh          # Go attendance layout
+./scripts/verify-geofence.sh          # Geofence domain tests + coverage
 ./scripts/verify-biometric.sh         # Rust biometric gRPC + health
 ./agent-harness/resolve-rules.sh api endpoint auth
 ```
@@ -51,6 +52,7 @@ infra/
 mobile/                 # (planned) KMP app
 scripts/
   verify-scaffold.sh    # Manual Go layout + toolchain verification
+  verify-geofence.sh    # Geofence domain tests + layer isolation
   verify-biometric.sh   # Manual Rust gRPC server + health checks
 .local/                 # Local AI tasks (gitignored)
 .cursor/                # Cursor rules (gitignored)

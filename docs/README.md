@@ -35,3 +35,4 @@
 - Agent entry point: [AGENTS.md](../AGENTS.md)
 - Resolve rules: `./agent-harness/resolve-rules.sh <keywords>`
 - Verify monorepo scaffold: `./scripts/verify-scaffold.sh`
+- Verify geofence domain: `./scripts/verify-geofence.sh`

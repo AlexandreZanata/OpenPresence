@@ -41,6 +41,12 @@ mobile/shared/
 
 Write geofence tests **before** implementation (TDD). See AGENT Task 02.
 
+```bash
+./scripts/verify-geofence.sh
+```
+
+Implemented in `services/attendance/internal/domain/geofence/`.
+
 ## Biometric tests (Rust)
 
 Implemented in `services/biometric/`:

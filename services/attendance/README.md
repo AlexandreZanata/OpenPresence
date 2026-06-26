@@ -6,7 +6,8 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 
 | Package | Responsibility |
 |---------|----------------|
-| `internal/domain` | PunchRecord, GeofenceZone, fraud flags, domain services |
+| `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
+| `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
 | `internal/infrastructure` | sqlx, Redis, NATS, gRPC clients |
 | `internal/interfaces` | HTTP handlers (Fiber), DTO mapping |
@@ -19,12 +20,14 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 go build ./...
 go test ./...
 go vet ./...
+go test -cover ./internal/domain/geofence/...
 ```
 
 From repo root:
 
 ```bash
 ./scripts/verify-scaffold.sh
+./scripts/verify-geofence.sh
 ```
 
 ## Related docs
