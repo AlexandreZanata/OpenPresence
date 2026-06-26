@@ -9,12 +9,13 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`), `AttendancePolicy`, ABAC subtree rules |
 | `internal/application/authorization` | `PunchAuthorizationService` — manager/HR/auditor gates |
+| `internal/application/punch` | `SubmitPunchHandler` — placement → policy → geofence → biometric → validate → persist |
 | `internal/domain/punch` | `PunchRecord`, `PunchValidator` — BR-010–BR-015 |
 | `internal/domain/fraud` | `FraudEvaluator`, `DeviceLockoutTracker` — BR-012–013 |
 | `internal/domain/workforce` | Employee placement (*lotação*), `WorkSchedule`, time accounting BR-030–034 |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
-| `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant` transactions |
+| `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant`, `PunchRepository` |
 | `internal/interfaces` | HTTP handlers (Fiber), DTO mapping |
 
 **Dependency rule:** domain does not import application, infrastructure, or interfaces.
@@ -26,6 +27,7 @@ go build ./...
 go test ./...
 go vet ./...
 go test -tags=integration ./internal/infrastructure/postgres/...
+go test -tags=integration ./internal/application/punch/...
 go test -cover ./internal/domain/geofence/...
 go test -cover ./internal/domain/organization/...
 go test -cover ./internal/domain/punch/...
@@ -43,6 +45,7 @@ From repo root:
 ./scripts/verify-workforce-placement.sh
 ./scripts/verify-work-schedule.sh
 ./scripts/verify-punch.sh
+./scripts/verify-punch-usecase.sh
 ./scripts/verify-fraud.sh
 ./scripts/verify-authorization.sh
 ./scripts/verify-rls.sh
@@ -50,7 +53,7 @@ From repo root:
 
 ## Migrations
 
-Versioned SQL in `migrations/` (001–006). Apply with `postgres.ApplyMigrations` or your migration runner.
+Versioned SQL in `migrations/` (001–007). Apply with `postgres.ApplyMigrations` or your migration runner.
 
 RLS policies use `current_setting('app.tenant_id')::uuid`. Application queries must run inside `postgres.WithTenant`.
 

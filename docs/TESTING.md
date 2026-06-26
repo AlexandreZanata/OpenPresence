@@ -161,6 +161,28 @@ ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 
 Build with ONNX Runtime: `cargo test --features onnx` in `services/biometric/`.
 
+## Application tests — SubmitPunch (Go)
+
+Implemented in `services/attendance/internal/application/punch/`:
+
+| Test | Expectation |
+|------|-------------|
+| `TestSubmitPunchHandler_HappyPath_VALID` | unit — VALID punch |
+| `TestSubmitPunchHandler_OutOfGeofence_REJECTED` | unit — REJECTED, no VALID row |
+| `TestSubmitPunchHandler_InvalidSequence_REJECTED` | unit — sequence BR-014 |
+| `TestSubmitPunch_Integration_HappyPath_VALIDInDB` | integration — VALID in Postgres + RLS |
+| `TestSubmitPunch_Integration_CrossTenant_Rejected` | integration — employee not visible |
+| `TestSubmitPunch_Integration_InvalidSequence_REJECTED` | integration — one VALID only |
+| `TestSubmitPunch_Integration_OutOfGeofence_REJECTED` | integration — geofence rejection |
+
+Manual verification:
+
+```bash
+./scripts/verify-punch-usecase.sh
+```
+
+Integration tests require Docker (testcontainers Postgres 16).
+
 ## Integration tests — Punch API
 
 | Test | Scope |

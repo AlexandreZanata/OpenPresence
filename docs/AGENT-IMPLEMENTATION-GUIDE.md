@@ -132,6 +132,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** Application orchestration — placement → policy → geofence → biometric gRPC → validate → persist with RLS.
 
+**Status:** implemented — `internal/application/punch/submit_punch.go`, postgres `PunchRepository`, integration tests with testcontainers. See `./scripts/verify-punch-usecase.sh`.
+
 Full roadmap: [IMPLEMENTATION-ROADMAP.md](IMPLEMENTATION-ROADMAP.md).
 
 ## Implementation constraints
