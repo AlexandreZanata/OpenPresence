@@ -8,6 +8,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 |---------|----------------|
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`) and `AttendancePolicy` inheritance |
+| `internal/domain/punch` | `PunchRecord`, `PunchValidator` — BR-010–BR-015 |
 | `internal/domain/workforce` | Employee placement (*lotação*), `WorkSchedule`, time accounting BR-030–034 |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
@@ -25,6 +26,7 @@ go vet ./...
 go test -tags=integration ./internal/infrastructure/postgres/...
 go test -cover ./internal/domain/geofence/...
 go test -cover ./internal/domain/organization/...
+go test -cover ./internal/domain/punch/...
 go test -cover ./internal/domain/workforce/...
 ```
 
@@ -37,6 +39,7 @@ From repo root:
 ./scripts/verify-attendance-policy.sh
 ./scripts/verify-workforce-placement.sh
 ./scripts/verify-work-schedule.sh
+./scripts/verify-punch.sh
 ./scripts/verify-rls.sh
 ```
 

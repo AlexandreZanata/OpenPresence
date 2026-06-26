@@ -18,14 +18,29 @@ mobile/shared/
 
 ## Domain tests — PunchRecord (Go)
 
+Implemented in `services/attendance/internal/domain/punch/`:
+
 | Test | Rule |
 |------|------|
-| `TestPunchRecord_ValidPunch` | BR-010 all criteria → VALID |
-| `TestPunchRecord_RejectMockGPS` | mocked GPS → SUSPICIOUS + MOCK_GPS |
-| `TestPunchRecord_RejectOutOfGeofence` | outside zone → REJECTED |
-| `TestPunchRecord_ClockManipulationDetection` | 10min delta → CLOCK_MANIPULATION |
-| `TestPunchRecord_ImpossibleSpeed` | 500km in 30s → CRITICAL |
-| `TestPunchRecord_OfflineSync_Expired` | past TTL → DISCARDED + audit |
+| `TestValidator_BR010_ValidPunch` | BR-010 all criteria → VALID |
+| `TestValidator_BR010_RejectLiveness` | liveness below threshold → REJECTED |
+| `TestValidator_BR010_RejectMockGPS` | mocked GPS → REJECTED |
+| `TestValidator_BR010_RejectOutOfGeofence` | outside zone → REJECTED |
+| `TestValidator_BR014_InvalidSequence` | BR-014 invalid sequence → REJECTED |
+| `TestValidator_BR014_ValidSequence` | BR-014 CLOCK_IN → BREAK_START |
+| `TestValidator_BR015_ServerTimeOfficial` | BR-015 punchedAt = server time |
+| `TestValidator_AntiDuplicateWithin60Seconds` | duplicate within 60s → REJECTED |
+| `TestValidator_ClockManipulationOver300Seconds` | \|device−server\| > 300s → REJECTED |
+| `TestValidator_BR011_OfflineSyncExpired` | past offline TTL → DISCARDED |
+| `TestValidator_BR011_OfflineSyncWithinTTL` | BR-011 sync within TTL → VALID |
+| `TestTransition_PendingToValid` | PunchStatus state machine |
+| `TestTransition_ValidIsTerminal` | VALID is terminal |
+
+Manual verification:
+
+```bash
+./scripts/verify-punch.sh
+```
 
 ## Domain tests — Geofence (Go)
 

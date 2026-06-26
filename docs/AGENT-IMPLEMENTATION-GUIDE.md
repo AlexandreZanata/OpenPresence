@@ -102,6 +102,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** `PunchValidator` — BR-010–015, punch sequence, anti-duplicate, server timestamp.
 
+**Status:** implemented — see `internal/domain/punch/` and `./scripts/verify-punch.sh`.
+
 ## Task 10 — Fraud detection domain (Go)
 
 **Goal:** `FraudEvaluator`, `DeviceLockoutTracker` — BR-012–013, all `FraudType` values.
