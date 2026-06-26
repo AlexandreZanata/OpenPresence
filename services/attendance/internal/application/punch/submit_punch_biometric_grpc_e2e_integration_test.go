@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	apppunch "github.com/AlexandreZanata/OpenPresence/services/attendance/internal/application/punch"
+	"github.com/AlexandreZanata/OpenPresence/services/attendance/internal/domain/geofence"
 	domainpunch "github.com/AlexandreZanata/OpenPresence/services/attendance/internal/domain/punch"
 	infbiometric "github.com/AlexandreZanata/OpenPresence/services/attendance/internal/infrastructure/biometric"
 )
@@ -24,7 +25,7 @@ import (
 const livenessThresholdEnroll = 0.85
 
 func TestSubmitPunch_E2E_BiometricGrpc_BR010_ValidPunch(t *testing.T) {
-	env, bio := newBiometricGrpcEnv(t)
+	env, bio := newBiometricGrpcEnv(t, nil)
 	defer bio.close()
 
 	result, err := env.handler.Handle(context.Background(), validPunchCmd(env, func(cmd *apppunch.SubmitPunchCommand) {
@@ -41,7 +42,7 @@ func TestSubmitPunch_E2E_BiometricGrpc_BR010_ValidPunch(t *testing.T) {
 }
 
 func TestSubmitPunch_E2E_BiometricGrpc_BR010_LowLiveness_REJECTED(t *testing.T) {
-	env, bio := newBiometricGrpcEnv(t)
+	env, bio := newBiometricGrpcEnv(t, nil)
 	defer bio.close()
 
 	result, err := env.handler.Handle(context.Background(), validPunchCmd(env, func(cmd *apppunch.SubmitPunchCommand) {
@@ -59,7 +60,7 @@ func TestSubmitPunch_E2E_BiometricGrpc_BR010_LowLiveness_REJECTED(t *testing.T) 
 }
 
 func TestBiometricGrpc_E2E_BR002_EnrollLivenessRejected(t *testing.T) {
-	env, bio := newBiometricGrpcEnv(t)
+	env, bio := newBiometricGrpcEnv(t, nil)
 	defer bio.close()
 
 	result, err := bio.raw.EnrollFace(
@@ -88,13 +89,27 @@ func (f *biometricGrpcFixture) close() {
 	}
 }
 
-func newBiometricGrpcEnv(t *testing.T) (integrationEnv, *biometricGrpcFixture) {
+func newBiometricGrpcEnv(t *testing.T, zones []geofence.GeofenceZone) (integrationEnv, *biometricGrpcFixture) {
+	return newBiometricGrpcEnvWithClock(t, zones, nil)
+}
+
+func newBiometricGrpcEnvWithClock(
+	t *testing.T,
+	zones []geofence.GeofenceZone,
+	clockFn func() time.Time,
+) (integrationEnv, *biometricGrpcFixture) {
 	t.Helper()
 	validJPEG, lowLivenessJPEG := loadBiometricFixtures(t)
 	bio := startBiometricServer(t)
 
 	opts := defaultIntegrationOpts()
 	opts.biometric = punchBiometricAdapter{client: bio.raw}
+	if zones != nil {
+		opts.zones = zones
+	}
+	if clockFn != nil {
+		opts.clock = clockFn
+	}
 	env := newIntegrationEnvWithOpts(t, opts)
 	bio.validJPEG = validJPEG
 	bio.lowLivenessJPEG = lowLivenessJPEG

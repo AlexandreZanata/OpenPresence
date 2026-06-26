@@ -293,6 +293,23 @@ go test -tags=integration ./services/attendance/internal/application/punch/... -
 
 Integration tests require Docker (testcontainers Postgres 16).
 
+## SubmitPunch full-stack E2E (Go + Rust gRPC)
+
+Postgres + RLS + stub placement/policy/geofence + live `biometric-server` gRPC (`submit_punch_stack_e2e_integration_test.go`):
+
+| Test | Rule |
+|------|------|
+| `TestSubmitPunch_E2E_Stack_BR010_HappyPath_VALIDInDB` | BR-010 VALID in Postgres |
+| `TestSubmitPunch_E2E_Stack_BR014_InvalidSequence_REJECTED` | BR-014 sequence rejection |
+| `TestSubmitPunch_E2E_Stack_BR023_AnyAssignedZone` | BR-023 any assigned zone |
+| `TestSubmitPunch_E2E_Stack_OptionalEnrolledProfile` | optional enroll profile + punch |
+
+```bash
+./scripts/verify-punch-stack-e2e.sh
+```
+
+Requires Docker, Cargo, and biometric fixtures under `services/biometric/tests/fixtures/`.
+
 ## Integration tests — Punch API
 
 | Test | Scope |

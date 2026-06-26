@@ -55,6 +55,7 @@ From repo root:
 ./scripts/verify-work-schedule-e2e.sh
 ./scripts/verify-punch.sh
 ./scripts/verify-punch-usecase.sh
+./scripts/verify-punch-stack-e2e.sh
 ./scripts/verify-fraud.sh
 ./scripts/verify-fraud-e2e.sh
 ./scripts/verify-authorization.sh
