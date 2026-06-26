@@ -7,7 +7,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | Package | Responsibility |
 |---------|----------------|
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
-| `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`) — type rules, cycles, orphans |
+| `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`) and `AttendancePolicy` inheritance |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
 | `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant` transactions |
@@ -32,6 +32,7 @@ From repo root:
 ./scripts/verify-scaffold.sh
 ./scripts/verify-geofence.sh
 ./scripts/verify-organization.sh
+./scripts/verify-attendance-policy.sh
 ./scripts/verify-rls.sh
 ```
 

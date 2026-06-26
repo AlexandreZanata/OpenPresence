@@ -84,6 +84,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** `AttendancePolicy` VO with merge along org ancestors. Presets for public administration vs private enterprise.
 
+**Status:** implemented — see `policy.go` in `internal/domain/organization/` and `./scripts/verify-attendance-policy.sh`.
+
 ## Task 07 — Employee placement / lotação (Go)
 
 **Goal:** `EmployeePlacement` with PRIMARY/SECONDARY assignments, effective dates, transfer rules.

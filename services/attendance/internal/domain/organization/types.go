@@ -35,4 +35,5 @@ var (
 	ErrCycle             = errors.New("organization: cycle detected in tree")
 	ErrEmptyTree         = errors.New("organization: tree has no nodes")
 	ErrInvalidNode       = errors.New("organization: node id and name are required")
+	ErrNodeNotFound      = errors.New("organization: node not found in tree")
 )
