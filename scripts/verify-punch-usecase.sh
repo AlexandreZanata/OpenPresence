@@ -32,7 +32,15 @@ else
 fi
 
 echo
-echo "--- go test -tags=integration $PKG ---"
+echo "--- go test -tags=integration $PKG (E2E BR-010–015) ---"
+if (cd "$ATTENDANCE" && go test -tags=integration -v "$PKG" -count=1 -run E2E); then
+  pass "go test integration E2E"
+else
+  fail "go test integration E2E"
+fi
+
+echo
+echo "--- go test -tags=integration $PKG (all integration) ---"
 if (cd "$ATTENDANCE" && go test -tags=integration -v "$PKG" -count=1); then
   pass "go test integration"
 else

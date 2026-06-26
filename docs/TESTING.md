@@ -193,11 +193,20 @@ Implemented in `services/attendance/internal/application/punch/`:
 | `TestSubmitPunch_Integration_CrossTenant_Rejected` | integration — employee not visible |
 | `TestSubmitPunch_Integration_InvalidSequence_REJECTED` | integration — one VALID only |
 | `TestSubmitPunch_Integration_OutOfGeofence_REJECTED` | integration — geofence rejection |
+| `TestSubmitPunch_E2E_BR010_LowLiveness_REJECTED` | E2E integration — liveness fail |
+| `TestSubmitPunch_E2E_BR010_MockGPS_REJECTED` | E2E integration — mock GPS |
+| `TestSubmitPunch_E2E_BR010_ClockSkew_REJECTED` | E2E integration — clock skew > 300s |
+| `TestSubmitPunch_E2E_BR010_Duplicate_REJECTED` | E2E integration — duplicate within 60s |
+| `TestSubmitPunch_E2E_BR011_OfflineExpired_DISCARDED` | E2E integration — offline TTL expired |
+| `TestSubmitPunch_E2E_BR011_OfflineWithinTTL_VALID` | E2E integration — offline within 8h |
+| `TestSubmitPunch_E2E_BR014_InvalidSequence_REJECTED` | E2E integration — sequence BR-014 |
+| `TestSubmitPunch_E2E_BR015_ServerTimeOfficial` | E2E integration — punchedAt = server time |
 
 Manual verification:
 
 ```bash
 ./scripts/verify-punch-usecase.sh
+go test -tags=integration ./services/attendance/internal/application/punch/... -run E2E
 ```
 
 Integration tests require Docker (testcontainers Postgres 16).
