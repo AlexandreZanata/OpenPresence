@@ -2,6 +2,7 @@ package com.openpresence.punch.presentation
 
 import com.openpresence.punch.domain.DeviceIntegrityReport
 import com.openpresence.punch.domain.GpsCoordinate
+import com.openpresence.punch.domain.OfflineSyncResult
 import com.openpresence.punch.domain.PunchErrorCode
 import com.openpresence.punch.domain.PunchRequest
 import com.openpresence.punch.domain.PunchResult
@@ -161,4 +162,6 @@ private class FakePunchRepository(
     }
 
     override suspend fun isOnline(): Boolean = true
+
+    override suspend fun syncOfflineQueue() = OfflineSyncResult(0, 0, offlineCount)
 }

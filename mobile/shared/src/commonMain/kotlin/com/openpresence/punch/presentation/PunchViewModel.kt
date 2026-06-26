@@ -38,6 +38,25 @@ class PunchViewModel(
         scope.launch { queueOffline(request) }
     }
 
+    fun syncOfflineQueue() {
+        scope.launch { runOfflineSync() }
+    }
+
+    private suspend fun runOfflineSync() {
+        if (!repository.isOnline()) {
+            return
+        }
+        _state.value = PunchState.Submitting
+        val result = repository.syncOfflineQueue()
+        _state.value = when {
+            result.failed > 0 -> PunchState.Error(
+                PunchErrorCode.NETWORK,
+                "Offline sync failed",
+            )
+            else -> PunchState.Idle
+        }
+    }
+
     private suspend fun runPunchFlow(type: PunchType) {
         try {
             _state.value = PunchState.CheckingDevice

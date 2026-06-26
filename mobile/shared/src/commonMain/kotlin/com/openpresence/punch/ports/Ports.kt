@@ -2,6 +2,7 @@ package com.openpresence.punch.ports
 
 import com.openpresence.punch.domain.DeviceIntegrityReport
 import com.openpresence.punch.domain.GpsCoordinate
+import com.openpresence.punch.domain.OfflineSyncResult
 import com.openpresence.punch.domain.PunchRequest
 import com.openpresence.punch.domain.PunchResult
 
@@ -31,4 +32,9 @@ interface PunchRepository {
     suspend fun submit(request: PunchRequest): PunchResult
     suspend fun queueOffline(request: PunchRequest)
     suspend fun isOnline(): Boolean
+    suspend fun syncOfflineQueue(): OfflineSyncResult
+}
+
+interface PunchApi {
+    suspend fun submit(request: PunchRequest): PunchResult
 }

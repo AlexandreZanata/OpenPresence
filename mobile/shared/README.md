@@ -7,6 +7,7 @@ Shared punch flow for Android and iOS (`com.openpresence.punch`).
 | Package | Role |
 |---------|------|
 | `domain` | PunchType, PunchStatus, models |
+| `data` | `OfflinePunchRepository` — queue + sync via `PunchApi` |
 | `ports` | Repository and platform port interfaces |
 | `presentation` | `PunchViewModel`, `PunchState` |
 | `di` | Koin `punchModule` |
@@ -24,6 +25,7 @@ From repo root:
 
 ```bash
 ./scripts/verify-mobile.sh
+./scripts/verify-mobile-e2e.sh
 ```
 
 ## Related docs

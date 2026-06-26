@@ -53,3 +53,10 @@ data class PunchRequest(
         return result
     }
 }
+
+/** Result of flushing the offline punch queue to the API. */
+data class OfflineSyncResult(
+    val synced: Int,
+    val failed: Int,
+    val pending: Int,
+)

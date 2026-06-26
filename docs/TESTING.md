@@ -362,11 +362,14 @@ Implemented in `mobile/shared/src/commonTest/`:
 | `startPunch_success_whenRepositoryReturnsValid` | `Success` + `VALID` |
 | `startPunch_error_onNetworkFailure` | `Error` + `NETWORK` |
 | `handleOfflinePunch_queuesPendingResult` | offline queue + `PENDING` |
+| `offlineQueue_syncsToMockApiWhenOnline` | E2E — repository flush via mock API |
+| `startPunch_E2E_offlineQueuesThenSyncWhenOnline` | E2E — ViewModel offline → sync |
 
 Manual verification (Gradle check + PunchState contract):
 
 ```bash
 ./scripts/verify-mobile.sh
+./scripts/verify-mobile-e2e.sh
 ```
 
 ## CI gates
