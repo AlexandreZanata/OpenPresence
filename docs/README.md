@@ -25,6 +25,7 @@
 | [COMMIT-CONVENTIONS.md](COMMIT-CONVENTIONS.md) | Commit and PR discipline |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [AGENT-IMPLEMENTATION-GUIDE.md](AGENT-IMPLEMENTATION-GUIDE.md) | AI agent implementation tasks |
+| [IMPLEMENTATION-ROADMAP.md](IMPLEMENTATION-ROADMAP.md) | Backend phases 05–14 (enterprise domain) |
 | [GLOSSARY.md](GLOSSARY.md) | Ubiquitous language |
 | [NEW-PROJECT-CHECKLIST.md](NEW-PROJECT-CHECKLIST.md) | Pre-implementation checklist |
 | [adr/](adr/) | Architecture Decision Records |

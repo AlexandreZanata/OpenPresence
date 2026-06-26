@@ -72,6 +72,50 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Status:** implemented — see `services/attendance/migrations/` and `./scripts/verify-rls.sh`.
 
+## Task 05 — Organization tree domain (Go)
+
+**Goal:** `internal/domain/organization/` — tenant-scoped `OrgNode` tree with types for public (secretariat → location → department) and private (division → department → team) hierarchies.
+
+**Invariants:** single root, no cycles, valid parent-child types.
+
+## Task 06 — AttendancePolicy inheritance (Go)
+
+**Goal:** `AttendancePolicy` VO with merge along org ancestors. Presets for public administration vs private enterprise.
+
+## Task 07 — Employee placement / lotação (Go)
+
+**Goal:** `EmployeePlacement` with PRIMARY/SECONDARY assignments, effective dates, transfer rules.
+
+## Task 08 — WorkSchedule & time accounting (Go)
+
+**Goal:** BR-030–034 — worked minutes, lateness, overtime, 12×36 / split shifts, time bank.
+
+## Task 09 — PunchRecord validation engine (Go)
+
+**Goal:** `PunchValidator` — BR-010–015, punch sequence, anti-duplicate, server timestamp.
+
+## Task 10 — Fraud detection domain (Go)
+
+**Goal:** `FraudEvaluator`, `DeviceLockoutTracker` — BR-012–013, all `FraudType` values.
+
+## Task 11 — Hierarchy authorization (Go)
+
+**Goal:** ABAC subtree checks — manager approves only descendant placements; HR tenant-scoped.
+
+## Task 12 — Biometric model download
+
+**Goal:** `scripts/download-models.sh` + `models/MANIFEST.json` with SHA-256 verification.
+
+## Task 13 — ONNX inference pipeline (Rust)
+
+**Goal:** Real RetinaFace + MiniFASNet + AuraFace when models present; stub fallback preserved.
+
+## Task 14 — SubmitPunch use case (Go)
+
+**Goal:** Application orchestration — placement → policy → geofence → biometric gRPC → validate → persist with RLS.
+
+Full roadmap: [IMPLEMENTATION-ROADMAP.md](IMPLEMENTATION-ROADMAP.md).
+
 ## Implementation constraints
 
 ### Security
