@@ -90,6 +90,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** `EmployeePlacement` with PRIMARY/SECONDARY assignments, effective dates, transfer rules.
 
+**Status:** implemented — see `internal/domain/workforce/` and `./scripts/verify-workforce-placement.sh`.
+
 ## Task 08 — WorkSchedule & time accounting (Go)
 
 **Goal:** BR-030–034 — worked minutes, lateness, overtime, 12×36 / split shifts, time bank.
