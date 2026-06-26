@@ -300,6 +300,22 @@ Uses testcontainers (`attendance_app` role, no `BYPASSRLS`). Manual verification
 ./scripts/verify-rls.sh
 ```
 
+## RLS E2E tests — SubmitPunch + enrollment (Go)
+
+Cross-tenant isolation through real application flows (not raw SQL seeds only).
+
+| Test | Expectation |
+|------|-------------|
+| `TestSubmitPunch_E2E_RLS_CrossTenantPunchIsolation` | tenant B punch via SubmitPunch invisible to tenant A |
+| `TestSaveFaceEmbedding_E2E_RLS_CrossTenantIsolation` | tenant B embedding invisible to tenant A after enroll save |
+| `TestSaveFaceEmbedding_E2E_RLS_CrossTenantEnrollDenied` | tenant A cannot enroll embedding for tenant B employee |
+
+`SaveFaceEmbeddingHandler` (`internal/application/enrollment/`) persists embeddings after biometric enrollment. Manual verification:
+
+```bash
+./scripts/verify-rls-e2e.sh
+```
+
 ## Mobile tests (KMP)
 
 Implemented in `mobile/shared/src/commonTest/`:

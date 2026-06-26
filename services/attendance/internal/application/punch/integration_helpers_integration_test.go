@@ -4,19 +4,11 @@ package punch_test
 
 import (
 	"context"
-	"fmt"
-	"path/filepath"
-	"runtime"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	tcpostgres "github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
 
 	apppunch "github.com/AlexandreZanata/OpenPresence/services/attendance/internal/application/punch"
 	"github.com/AlexandreZanata/OpenPresence/services/attendance/internal/domain/fraud"
@@ -30,12 +22,15 @@ import (
 const integrationBaseTime = "2026-06-26T09:00:00Z"
 
 type integrationEnv struct {
-	handler       apppunch.SubmitPunchHandler
-	punchRepo     *postgres.PunchRepository
-	tenantID      uuid.UUID
-	otherTenantID uuid.UUID
-	employeeID    uuid.UUID
-	serverTime    time.Time
+	handler          apppunch.SubmitPunchHandler
+	punchRepo        *postgres.PunchRepository
+	appDB            *sqlx.DB
+	tenantID         uuid.UUID
+	otherTenantID    uuid.UUID
+	employeeID       uuid.UUID
+	otherEmployeeID  uuid.UUID
+	serverTime       time.Time
+	integrationOpts  integrationOpts
 }
 
 type integrationOpts struct {
@@ -88,18 +83,36 @@ func newIntegrationEnvWithZones(t *testing.T, zones []geofence.GeofenceZone) int
 func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEnv {
 	t.Helper()
 	adminDB, appDB := startPostgres(t)
-	tenantID, otherTenantID, employeeID := seedEmployee(t, adminDB)
+	tenantID, otherTenantID, employeeID, otherEmployeeID := seedEmployees(t, adminDB)
 	serverTime := opts.clock()
 
 	empRepo := postgres.NewEmployeeRepository(appDB)
 	punchRepo := postgres.NewPunchRepository(appDB)
 
+	handler := buildSubmitPunchHandler(
+		empRepo, punchRepo, tenantID, employeeID, serverTime, opts,
+	)
+
+	return integrationEnv{
+		handler: handler, punchRepo: punchRepo, appDB: appDB,
+		tenantID: tenantID, otherTenantID: otherTenantID,
+		employeeID: employeeID, otherEmployeeID: otherEmployeeID,
+		serverTime: serverTime, integrationOpts: opts,
+	}
+}
+
+func buildSubmitPunchHandler(
+	empRepo *postgres.EmployeeRepository,
+	punchRepo *postgres.PunchRepository,
+	tenantID, employeeID uuid.UUID,
+	serverTime time.Time,
+	opts integrationOpts,
+) apppunch.SubmitPunchHandler {
 	zones := opts.zones
 	if zones == nil {
 		zones = []geofence.GeofenceZone{testZone()}
 	}
-
-	handler := apppunch.SubmitPunchHandler{
+	return apppunch.SubmitPunchHandler{
 		Employees: employeeReaderAdapter{repo: empRepo},
 		Placements: &stubPlacementReader{placement: &workforce.EmployeePlacement{
 			ID: "pl-1", EmployeeID: employeeID.String(), TenantID: tenantID.String(),
@@ -115,12 +128,14 @@ func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEn
 		Lockout:   opts.lockout,
 		Clock:     opts.clock,
 	}
+}
 
-	return integrationEnv{
-		handler: handler, punchRepo: punchRepo,
-		tenantID: tenantID, otherTenantID: otherTenantID, employeeID: employeeID,
-		serverTime: serverTime,
-	}
+func (env integrationEnv) handlerForTenant(tenantID, employeeID uuid.UUID) apppunch.SubmitPunchHandler {
+	empRepo := postgres.NewEmployeeRepository(env.appDB)
+	punchRepo := postgres.NewPunchRepository(env.appDB)
+	return buildSubmitPunchHandler(
+		empRepo, punchRepo, tenantID, employeeID, env.serverTime, env.integrationOpts,
+	)
 }
 
 func validPunchCmd(env integrationEnv, mutate func(*apppunch.SubmitPunchCommand)) apppunch.SubmitPunchCommand {
@@ -159,74 +174,6 @@ func (a employeeReaderAdapter) GetEmployee(
 		ID: emp.ID, TenantID: emp.TenantID,
 		Registration: emp.Registration, Status: emp.Status,
 	}, nil
-}
-
-func startPostgres(t *testing.T) (admin, app *sqlx.DB) {
-	t.Helper()
-	ctx := context.Background()
-	container, err := tcpostgres.Run(ctx,
-		"postgres:16-alpine",
-		tcpostgres.WithDatabase("openpresence"),
-		tcpostgres.WithUsername("openpresence"),
-		tcpostgres.WithPassword("openpresence"),
-		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).WithStartupTimeout(60*time.Second),
-		),
-	)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = container.Terminate(ctx) })
-
-	adminConn, err := container.ConnectionString(ctx, "sslmode=disable")
-	require.NoError(t, err)
-	adminDB, err := sqlx.Connect("postgres", adminConn)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = adminDB.Close() })
-
-	err = postgres.ApplyMigrations(adminDB.DB, migrationsDir(t))
-	require.NoError(t, err)
-
-	host, err := container.Host(ctx)
-	require.NoError(t, err)
-	port, err := container.MappedPort(ctx, "5432/tcp")
-	require.NoError(t, err)
-	appConn := fmt.Sprintf(
-		"postgres://attendance_app:attendance_app@%s:%s/openpresence?sslmode=disable",
-		host, port.Port(),
-	)
-	appDB, err := sqlx.Connect("postgres", appConn)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = appDB.Close() })
-	return adminDB, appDB
-}
-
-func seedEmployee(t *testing.T, admin *sqlx.DB) (tenantID, otherTenantID, employeeID uuid.UUID) {
-	t.Helper()
-	ctx := context.Background()
-	_, err := admin.ExecContext(ctx, `SET row_security = off`)
-	require.NoError(t, err)
-
-	err = admin.QueryRowContext(ctx, `
-		INSERT INTO tenants (slug) VALUES ('tenant-a') RETURNING id`).Scan(&tenantID)
-	require.NoError(t, err)
-	err = admin.QueryRowContext(ctx, `
-		INSERT INTO tenants (slug) VALUES ('tenant-b') RETURNING id`).Scan(&otherTenantID)
-	require.NoError(t, err)
-	err = admin.QueryRowContext(ctx, `
-		INSERT INTO employees (tenant_id, registration, status)
-		VALUES ($1, 'EMP-1', 'ACTIVE') RETURNING id`, tenantID).Scan(&employeeID)
-	require.NoError(t, err)
-	return tenantID, otherTenantID, employeeID
-}
-
-func migrationsDir(t *testing.T) string {
-	t.Helper()
-	_, filename, _, ok := runtime.Caller(0)
-	require.True(t, ok)
-	dir := filepath.Join(filepath.Dir(filename), "..", "..", "..", "migrations")
-	abs, err := filepath.Abs(dir)
-	require.NoError(t, err)
-	return abs
 }
 
 func mustParseTime(value string) time.Time {
