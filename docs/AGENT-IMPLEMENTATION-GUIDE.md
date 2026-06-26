@@ -68,7 +68,9 @@ forbidden_patterns:
 
 ## Task 04 — Row-Level Security (PostgreSQL)
 
-Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_id = current_setting('app.tenant_id')::UUID`. Go: `SET LOCAL` inside transactions.
+Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_id = current_setting('app.tenant_id')::UUID`. Go: `SET LOCAL` inside transactions via `postgres.WithTenant`.
+
+**Status:** implemented — see `services/attendance/migrations/` and `./scripts/verify-rls.sh`.
 
 ## Implementation constraints
 

@@ -4,9 +4,9 @@ Each subfolder is **one task**. Work one folder at a time until every step in `t
 
 ## Active task
 
-**Current:** [`task-04-row-level-security`](task-04-row-level-security/)
+**Current:** none — all seeded tasks complete.
 
-Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/), [`task-01-biometric-service`](task-01-biometric-service/), [`task-02-geofence-engine`](task-02-geofence-engine/), [`task-03-punch-viewmodel`](task-03-punch-viewmodel/)
+Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/), [`task-01-biometric-service`](task-01-biometric-service/), [`task-02-geofence-engine`](task-02-geofence-engine/), [`task-03-punch-viewmodel`](task-03-punch-viewmodel/), [`task-04-row-level-security`](task-04-row-level-security/)
 
 ## Folder layout (every task)
 
@@ -32,7 +32,7 @@ Completed: [`task-00-monorepo-scaffold`](task-00-monorepo-scaffold/), [`task-01-
 | `task-01-biometric-service` | done | Rust gRPC biometric service |
 | `task-02-geofence-engine` | done | Domain geofence (TDD) — BR-020–BR-024 |
 | `task-03-punch-viewmodel` | done | KMP PunchViewModel |
-| `task-04-row-level-security` | **active** | PostgreSQL RLS multi-tenant |
+| `task-04-row-level-security` | done | PostgreSQL RLS multi-tenant |
 
 ## New task
 

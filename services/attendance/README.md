@@ -9,7 +9,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
-| `internal/infrastructure` | sqlx, Redis, NATS, gRPC clients |
+| `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant` transactions |
 | `internal/interfaces` | HTTP handlers (Fiber), DTO mapping |
 
 **Dependency rule:** domain does not import application, infrastructure, or interfaces.
@@ -20,6 +20,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 go build ./...
 go test ./...
 go vet ./...
+go test -tags=integration ./internal/infrastructure/postgres/...
 go test -cover ./internal/domain/geofence/...
 ```
 
@@ -28,10 +29,18 @@ From repo root:
 ```bash
 ./scripts/verify-scaffold.sh
 ./scripts/verify-geofence.sh
+./scripts/verify-rls.sh
 ```
+
+## Migrations
+
+Versioned SQL in `migrations/` (001–006). Apply with `postgres.ApplyMigrations` or your migration runner.
+
+RLS policies use `current_setting('app.tenant_id')::uuid`. Application queries must run inside `postgres.WithTenant`.
 
 ## Related docs
 
-- `docs/DOMAIN-MODEL.md` — Attendance context
+- `docs/DATA-MODEL.md` — tables and RLS pattern
+- `docs/SECURITY.md` — multi-tenancy
 - `docs/BUSINESS-RULES.md` — BR-010–BR-024
 - `docs/ARCHITECTURE.md` — service map

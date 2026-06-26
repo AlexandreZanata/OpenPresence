@@ -75,6 +75,22 @@ Manual verification (starts server, curls health, checks gRPC port):
 | `TestPunchAPI_RateLimit` | 429 after burst |
 | `TestPunchAPI_OfflineSync_BulkPunches` | 50 offline punches sync |
 
+## PostgreSQL RLS tests (Go)
+
+Implemented in `services/attendance/internal/infrastructure/postgres/` (`//go:build integration`):
+
+| Test | Expectation |
+|------|-------------|
+| `TestMigrations_ApplyOnEmptyDB` | migrations 001–006 on empty Postgres 16 |
+| `TestRLS_TenantCannotReadOtherTenantEmployee` | cross-tenant `GetEmployee` returns nil |
+| `TestRLS_PunchRecordsAndEmbeddingsIsolated` | tenant-scoped row counts on related tables |
+
+Uses testcontainers (`attendance_app` role, no `BYPASSRLS`). Manual verification:
+
+```bash
+./scripts/verify-rls.sh
+```
+
 ## Mobile tests (KMP)
 
 Implemented in `mobile/shared/src/commonTest/`:

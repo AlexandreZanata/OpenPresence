@@ -46,8 +46,12 @@ CREATE POLICY tenant_isolation ON employees
 Go pattern (transaction-scoped):
 
 ```go
-tx.ExecContext(ctx, "SET LOCAL app.tenant_id = $1", tenantID)
+postgres.WithTenant(ctx, db, tenantID, func(tx *sqlx.Tx) error {
+    return tx.GetContext(ctx, &emp, `SELECT ... FROM employees WHERE id = $1`, id)
+})
 ```
+
+Uses `set_config('app.tenant_id', $1, true)` (equivalent to `SET LOCAL`). Application connects as non-superuser role `attendance_app` (see migration `006_create_app_role.sql`).
 
 ## Indexing strategy
 

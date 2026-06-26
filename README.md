@@ -31,6 +31,7 @@ pip install -r agent-harness/requirements.txt
 ./scripts/verify-geofence.sh          # Geofence domain tests + coverage
 ./scripts/verify-biometric.sh         # Rust biometric gRPC + health
 ./scripts/verify-mobile.sh            # KMP PunchViewModel + layer checks
+./scripts/verify-rls.sh             # PostgreSQL RLS + testcontainers integration
 ./agent-harness/resolve-rules.sh api endpoint auth
 ```
 
@@ -56,6 +57,7 @@ scripts/
   verify-geofence.sh    # Geofence domain tests + layer isolation
   verify-biometric.sh   # Manual Rust gRPC server + health checks
   verify-mobile.sh      # KMP shared tests + PunchState contract checks
+  verify-rls.sh         # PostgreSQL RLS migrations + tenant isolation tests
 .local/                 # Local AI tasks (gitignored)
 .cursor/                # Cursor rules (gitignored)
 ```

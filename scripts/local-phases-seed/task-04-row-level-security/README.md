@@ -1,6 +1,6 @@
 # Task 04 — Row-level security (PostgreSQL)
 
-**Status:** pending  
+**Status:** done  
 **Phase ID:** task-04-row-level-security
 
 ## Goal
