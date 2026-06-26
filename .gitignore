@@ -1,0 +1,29 @@
+# Local AI workspace (tasks, overrides, context — not versioned)
+.local/
+
+# Cursor rules (local per machine — restore via scripts/setup-local-ai.sh)
+.cursor/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS and IDE (non-Cursor)
+.DS_Store
+.idea/
+*.swp
+
+# Python tooling (harness scripts)
+__pycache__/
+.venv/
+venv/
+
+# Node / build artifacts (add stack-specific entries as the project grows)
+node_modules/
+dist/
+build/
+coverage/
+
+# ONNX model weights (download separately — see docs/BIOMETRICS.md)
+models/

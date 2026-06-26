@@ -1,0 +1,38 @@
+---
+description: OpenPresence minimum validation gates before marking work done
+alwaysApply: true
+---
+
+# OpenPresence — minimum validations
+
+> Project-specific gates. Harness rules in other `.mdc` files still apply.
+
+## Before any implementation
+
+1. Read `AGENTS.md` and `.local/tasks/current.md` if present.
+2. Check `docs/NEW-PROJECT-CHECKLIST.md` — **ASK** if checklist items are blank.
+3. Use terms from `docs/GLOSSARY.md` only; do not invent domain language.
+
+## Before marking work done
+
+| Gate | Action |
+|------|--------|
+| Size caps | ≤80 lines/function, ≤200 lines/file, cyclomatic ≤10 |
+| Tests | Run project test command; do not claim pass without output |
+| Lint / typecheck | Run when tooling exists |
+| Secrets | Never commit `.env`; use `.env.example` for keys |
+| API changes | Update `docs/API-CONTRACT.md` before handlers |
+| Security | Load `./agent-harness/resolve-rules.sh owasp auth` for auth/API work |
+
+## Agent NEVER (this project)
+
+- Commit `.local/` or `.cursor/` contents.
+- Skip glossary/checklist when adding domain concepts.
+- Add dependencies without user approval on greenfield tasks.
+- Ship code in Portuguese — English only per repo policy.
+
+## Local context
+
+- Tasks: `.local/tasks/`
+- Overrides: `.local/overrides/`
+- Progress: `.local/ROADMAP.md`
