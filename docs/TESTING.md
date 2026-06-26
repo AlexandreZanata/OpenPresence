@@ -64,6 +64,26 @@ Manual verification:
 ./scripts/verify-fraud.sh
 ```
 
+## Domain tests — Hierarchy authorization (Go)
+
+Implemented in `services/attendance/internal/domain/organization/` and `internal/application/authorization/`:
+
+| Test | Expectation |
+|------|-------------|
+| `TestCanApprovePunch_PublicHealthManagerApprovesNurse` | Health manager approves nursing subtree |
+| `TestCanApprovePunch_PublicHealthManagerRejectsEducation` | Cross-secretariat denied |
+| `TestCanApprovePunch_PrivateSalesManagerApprovesInsideSales` | Sales manager approves team |
+| `TestCanApprovePunch_PrivateSalesManagerRejectsIT` | Sibling department denied |
+| `TestCanReadPunch_AuditorAllowedWriteDenied` | AUDITOR read-only |
+| `TestCanApprovePunch_CrossTenantDenied` | Cross-tenant always denied |
+| `TestPunchAuthorizationService_*` | Application layer with mocked `OrgTreeReader` |
+
+Manual verification:
+
+```bash
+./scripts/verify-authorization.sh
+```
+
 ## Domain tests — Geofence (Go)
 
 | Test | Case |

@@ -114,6 +114,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** ABAC subtree checks — manager approves only descendant placements; HR tenant-scoped.
 
+**Status:** implemented — see `authorization.go`, `internal/application/authorization/`, and `./scripts/verify-authorization.sh`.
+
 ## Task 12 — Biometric model download
 
 **Goal:** `scripts/download-models.sh` + `models/MANIFEST.json` with SHA-256 verification.
