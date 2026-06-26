@@ -75,6 +75,24 @@ Manual verification (starts server, curls health, checks gRPC port):
 | `TestPunchAPI_RateLimit` | 429 after burst |
 | `TestPunchAPI_OfflineSync_BulkPunches` | 50 offline punches sync |
 
+## Mobile tests (KMP)
+
+Implemented in `mobile/shared/src/commonTest/`:
+
+| Test | Expectation |
+|------|-------------|
+| `startPunch_emitsCheckingDeviceFirst` | `CheckingDevice` before device port runs |
+| `startPunch_outOfGeofence_whenValidatorFails` | `OutOfGeofence` with distance |
+| `startPunch_success_whenRepositoryReturnsValid` | `Success` + `VALID` |
+| `startPunch_error_onNetworkFailure` | `Error` + `NETWORK` |
+| `handleOfflinePunch_queuesPendingResult` | offline queue + `PENDING` |
+
+Manual verification (Gradle check + PunchState contract):
+
+```bash
+./scripts/verify-mobile.sh
+```
+
 ## CI gates
 
 - All unit tests pass

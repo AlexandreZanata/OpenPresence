@@ -60,9 +60,11 @@ forbidden_patterns:
 
 **Flow:** device check → location → geofence → camera → liveness → submit → handle response
 
-**Offline:** SQLDelight pending queue + background sync.
+**Offline:** SQLDelight pending queue + background sync (stub repository in first pass).
 
 **DI:** Koin module for ViewModel, Repository, BiometricProcessor, GeofenceValidator.
+
+**Status:** implemented — see `mobile/shared/README.md` and `./scripts/verify-mobile.sh`.
 
 ## Task 04 — Row-Level Security (PostgreSQL)
 

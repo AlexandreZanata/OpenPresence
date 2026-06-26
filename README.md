@@ -30,10 +30,11 @@ pip install -r agent-harness/requirements.txt
 ./scripts/verify-scaffold.sh          # Go attendance layout
 ./scripts/verify-geofence.sh          # Geofence domain tests + coverage
 ./scripts/verify-biometric.sh         # Rust biometric gRPC + health
+./scripts/verify-mobile.sh            # KMP PunchViewModel + layer checks
 ./agent-harness/resolve-rules.sh api endpoint auth
 ```
 
-Requires **Go 1.22+** and **Rust stable**.
+Requires **Go 1.22+**, **Rust stable**, and **JDK 17+** (Gradle wrapper included).
 
 ## Project layout
 
@@ -49,11 +50,12 @@ infra/
   docker-compose.yml    # Local stack placeholder (commented)
   k8s/                  # Helm charts (planned)
   terraform/            # IaC (planned)
-mobile/                 # (planned) KMP app
+mobile/                 # KMP shared module (PunchViewModel)
 scripts/
   verify-scaffold.sh    # Manual Go layout + toolchain verification
   verify-geofence.sh    # Geofence domain tests + layer isolation
   verify-biometric.sh   # Manual Rust gRPC server + health checks
+  verify-mobile.sh      # KMP shared tests + PunchState contract checks
 .local/                 # Local AI tasks (gitignored)
 .cursor/                # Cursor rules (gitignored)
 ```

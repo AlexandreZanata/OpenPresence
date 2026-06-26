@@ -1,6 +1,6 @@
 # Task 03 — PunchViewModel (Kotlin Multiplatform)
 
-**Status:** pending  
+**Status:** done  
 **Phase ID:** task-03-punch-viewmodel
 
 ## Goal

@@ -25,6 +25,12 @@ dist/
 build/
 coverage/
 
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+**/build/
+!**/src/**/build/
+
 # ONNX model weights (download separately — see docs/BIOMETRICS.md)
 models/
 
