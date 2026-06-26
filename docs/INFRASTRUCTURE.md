@@ -12,6 +12,20 @@ docker compose -f infra/docker-compose.e2e.yml up -d --wait
 docker compose -f infra/docker-compose.e2e.yml down
 ```
 
+## Local development backend (host)
+
+Faster iteration than full Docker compile (Rust/Go on host, Postgres in Docker):
+
+```bash
+./scripts/dev-backend.sh start    # Postgres :5433, attendance :8088, biometric :9090
+./scripts/dev-backend.sh status
+./scripts/dev-backend.sh stop
+```
+
+Admin panel (planned `web/admin/`): `VITE_API_BASE_URL=http://127.0.0.1:8088`
+
+**Note:** Auth service (`POST /v1/auth/login`) not implemented — admin UI will use dev mock until auth microservice exists.
+
 Target stack (when enabled):
 
 ```yaml
