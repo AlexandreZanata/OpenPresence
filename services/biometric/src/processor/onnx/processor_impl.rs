@@ -4,8 +4,8 @@ use std::sync::{Arc, RwLock};
 use image::GenericImageView;
 
 use super::super::{
-    decode_jpeg, passes_enroll_liveness, BiometricProcessor, EnrollResult, FraudFlag,
-    ProcessorError, VerifyResult,
+    decode_jpeg, passes_enroll_liveness, passes_enroll_quality, BiometricProcessor, EnrollResult,
+    FraudFlag, ProcessorError, VerifyResult,
 };
 use super::face_processor::{crop_face, FaceProcessor};
 use crate::config::RECOGNITION_THRESHOLD;
@@ -97,27 +97,36 @@ impl BiometricProcessor for OnnxProcessor {
         let (is_live, liveness_score) = self.face.liveness_score(&face)?;
         let embedding = self.face.embed(&face, &det.landmarks)?;
         let quality_score = Self::quality_score(w, h);
+        let liveness_ok = is_live && passes_enroll_liveness(liveness_score);
+        let quality_ok = passes_enroll_quality(quality_score);
+        let accepted = liveness_ok && quality_ok;
 
-        if is_live && passes_enroll_liveness(liveness_score) {
+        if accepted {
             let key = Self::profile_key(tenant_id, employee_id);
             self.profiles.write().unwrap().insert(key, embedding.clone());
         }
 
-        let fraud_flags = if is_live {
-            vec![]
-        } else {
-            vec![FraudFlag {
+        let mut fraud_flags = Vec::new();
+        if !liveness_ok {
+            fraud_flags.push(FraudFlag {
                 fraud_type: "LIVENESS_FAILED".into(),
                 severity: "HIGH".into(),
                 metadata_json: format!(r#"{{"liveness_score":{liveness_score}}}"#),
-            }]
-        };
+            });
+        }
+        if !quality_ok {
+            fraud_flags.push(FraudFlag {
+                fraud_type: "LOW_QUALITY".into(),
+                severity: "MEDIUM".into(),
+                metadata_json: format!(r#"{{"quality_score":{quality_score}}}"#),
+            });
+        }
 
         Ok(EnrollResult {
-            is_live,
+            is_live: liveness_ok,
             liveness_score,
             quality_score,
-            embedding,
+            embedding: if accepted { embedding } else { vec![] },
             fraud_flags,
         })
     }

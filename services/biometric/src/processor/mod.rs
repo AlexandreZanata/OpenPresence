@@ -93,6 +93,10 @@ pub fn passes_enroll_liveness(score: f32) -> bool {
     score >= LIVENESS_THRESHOLD_ENROLL
 }
 
+pub fn passes_enroll_quality(score: f32) -> bool {
+    score >= crate::config::QUALITY_THRESHOLD_ENROLL
+}
+
 mod factory;
 mod stub;
 

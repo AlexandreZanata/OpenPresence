@@ -41,7 +41,12 @@ From repo root:
 ```bash
 ./scripts/verify-biometric.sh
 ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
+./scripts/verify-enrollment.sh
 ```
+
+## Enrollment (BR-001–003)
+
+gRPC `EnrollFace` rejects captures when `liveness_score < 0.85` (BR-002) or `quality_score < 0.7` (BR-003). Three-angle happy path (BR-001) is covered by `tests/enrollment_e2e.rs` and `verify-enrollment.sh`.
 
 ## Ports (default)
 

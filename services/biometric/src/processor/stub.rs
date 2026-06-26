@@ -5,8 +5,8 @@ use image::{DynamicImage, GenericImageView};
 
 use super::{
     decode_jpeg, embedding_from_seed, liveness_from_image, passes_enroll_liveness,
-    passes_punch_liveness, BiometricProcessor, EnrollResult, FraudFlag, ProcessorError,
-    VerifyResult,
+    passes_enroll_quality, passes_punch_liveness, BiometricProcessor, EnrollResult, FraudFlag,
+    ProcessorError, VerifyResult,
 };
 use crate::config::RECOGNITION_THRESHOLD;
 use crate::pipeline::{cosine_similarity, preprocess_for_recognition};
@@ -95,32 +95,40 @@ impl BiometricProcessor for StubProcessor {
     ) -> Result<EnrollResult, ProcessorError> {
         let img = decode_jpeg(frame_jpeg)?;
         let liveness_score = liveness_from_image(&img);
-        let is_live = passes_enroll_liveness(liveness_score);
+        let liveness_ok = passes_enroll_liveness(liveness_score);
         let quality_score = Self::quality_score(&img);
+        let quality_ok = passes_enroll_quality(quality_score);
+        let accepted = liveness_ok && quality_ok;
         let landmarks = [[0.0_f32; 2]; 5];
         let _ = preprocess_for_recognition(&img, &landmarks);
         let embedding = embedding_from_seed(&format!("{tenant_id}:{employee_id}:enroll"));
 
-        if is_live {
+        if accepted {
             let key = Self::profile_key(tenant_id, employee_id);
             self.profiles.write().unwrap().insert(key, embedding.clone());
         }
 
-        let fraud_flags = if is_live {
-            vec![]
-        } else {
-            vec![FraudFlag {
+        let mut fraud_flags = Vec::new();
+        if !liveness_ok {
+            fraud_flags.push(FraudFlag {
                 fraud_type: "LIVENESS_FAILED".into(),
                 severity: "HIGH".into(),
                 metadata_json: format!(r#"{{"liveness_score":{liveness_score}}}"#),
-            }]
-        };
+            });
+        }
+        if !quality_ok {
+            fraud_flags.push(FraudFlag {
+                fraud_type: "LOW_QUALITY".into(),
+                severity: "MEDIUM".into(),
+                metadata_json: format!(r#"{{"quality_score":{quality_score}}}"#),
+            });
+        }
 
         Ok(EnrollResult {
-            is_live,
+            is_live: liveness_ok,
             liveness_score,
             quality_score,
-            embedding,
+            embedding: if accepted { embedding } else { vec![] },
             fraud_flags,
         })
     }

@@ -10,8 +10,11 @@ use tokio_stream::wrappers::TcpListenerStream;
 use tonic::transport::{Channel, Server};
 
 fn tiny_jpeg() -> Vec<u8> {
-    let img =
-        image::DynamicImage::ImageRgb8(RgbImage::from_pixel(128, 128, image::Rgb([90, 120, 200])));
+    let img = image::DynamicImage::ImageRgb8(RgbImage::from_pixel(
+        128,
+        128,
+        image::Rgb([240, 240, 240]),
+    ));
     let mut buf = Vec::new();
     let mut cursor = std::io::Cursor::new(&mut buf);
     img.write_to(&mut cursor, image::ImageFormat::Jpeg).unwrap();
@@ -55,7 +58,8 @@ async fn grpc_verify_punch_and_enroll_roundtrip() {
         .await
         .unwrap()
         .into_inner();
-    assert!(enroll.liveness_score > 0.0);
+    assert!(enroll.is_live);
+    assert!(enroll.liveness_score >= 0.85);
     assert!(!enroll.embedding.is_empty());
 
     let verify = client

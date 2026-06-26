@@ -2,6 +2,7 @@
 
 pub const LIVENESS_THRESHOLD_PUNCH: f32 = 0.80;
 pub const LIVENESS_THRESHOLD_ENROLL: f32 = 0.85;
+pub const QUALITY_THRESHOLD_ENROLL: f32 = 0.70;
 pub const RECOGNITION_THRESHOLD: f32 = 0.75;
 pub const EMBEDDING_DIM: usize = 512;
 

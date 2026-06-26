@@ -161,6 +161,25 @@ ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 
 Build with ONNX Runtime: `cargo test --features onnx` in `services/biometric/`.
 
+## Enrollment E2E tests (Rust gRPC)
+
+Implemented in `services/biometric/tests/enrollment_e2e.rs`:
+
+| Test | Rule |
+|------|------|
+| `enrollment_e2e_br001_three_angles_success` | BR-001 FRONTAL, LEFT_15, RIGHT_15 |
+| `enrollment_e2e_br002_liveness_fail_rejected` | BR-002 liveness < 0.85 → no embedding |
+| `enrollment_e2e_br003_low_quality_rejected` | BR-003 quality < 0.7 → no embedding |
+
+Manual verification (integration tests + live server; grpcurl optional):
+
+```bash
+./scripts/verify-enrollment.sh
+ONNX_MODELS_PATH=./models ./scripts/verify-enrollment.sh
+```
+
+Fixtures for grpcurl: `services/biometric/tests/fixtures/*.jpg`.
+
 ## Application tests — SubmitPunch (Go)
 
 Implemented in `services/attendance/internal/application/punch/`:
