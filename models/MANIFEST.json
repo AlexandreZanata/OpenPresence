@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "description": "OpenPresence ONNX biometric models — not committed; verify with scripts/verify-models.sh",
+  "models": [
+    {
+      "file": "auraface.onnx",
+      "url": "https://huggingface.co/fal/AuraFace-v1/resolve/main/glintr100.onnx",
+      "sha256": "a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60",
+      "license": "MIT (AuraFace / fal/AuraFace-v1)",
+      "source": "Recognition embedding — glintr100.onnx renamed to auraface.onnx"
+    },
+    {
+      "file": "retinaface.onnx",
+      "url": "https://huggingface.co/fal/AuraFace-v1/resolve/main/scrfd_10g_bnkps.onnx",
+      "sha256": "5838f7fe053675b1c7a08b633df49e7af5495cee0493c7dcf6697200b85b5b91",
+      "license": "MIT (AuraFace bundle — SCRFD detector)",
+      "source": "Face detection — scrfd_10g_bnkps.onnx renamed to retinaface.onnx"
+    },
+    {
+      "file": "minifasnet_v2.onnx",
+      "url": "https://github.com/yakhyo/face-anti-spoofing/releases/download/weights/MiniFASNetV2.onnx",
+      "sha256": "b32929adc2d9c34b9486f8c4c7bc97c1b69bc0ea9befefc380e4faae4e463907",
+      "license": "Apache-2.0 (Silent-Face-Anti-Spoofing weights via yakhyo mirror)",
+      "source": "Liveness ensemble scale 2.7"
+    },
+    {
+      "file": "minifasnet_v1se.onnx",
+      "url": "https://github.com/yakhyo/face-anti-spoofing/releases/download/weights/MiniFASNetV1SE.onnx",
+      "sha256": "ebab7f90c7833fbccd46d3a555410e78d969db5438e169b6524be444862b3676",
+      "license": "Apache-2.0 (Silent-Face-Anti-Spoofing weights via yakhyo mirror)",
+      "source": "Liveness ensemble scale 4.0"
+    }
+  ]
+}

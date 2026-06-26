@@ -84,6 +84,15 @@ Manual verification:
 ./scripts/verify-authorization.sh
 ```
 
+## Model download (ONNX)
+
+| Script | Expectation |
+|--------|-------------|
+| `./scripts/download-models.sh` | Fetches all models from `models/MANIFEST.json` |
+| `./scripts/verify-models.sh` | All files present + SHA-256 match manifest |
+
+Models are gitignored; manifest is committed at `models/MANIFEST.json`.
+
 ## Domain tests — Geofence (Go)
 
 | Test | Case |

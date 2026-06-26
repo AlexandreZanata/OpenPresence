@@ -120,6 +120,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** `scripts/download-models.sh` + `models/MANIFEST.json` with SHA-256 verification.
 
+**Status:** implemented — see `models/MANIFEST.json`, `./scripts/download-models.sh`, `./scripts/verify-models.sh`.
+
 ## Task 13 — ONNX inference pipeline (Rust)
 
 **Goal:** Real RetinaFace + MiniFASNet + AuraFace when models present; stub fallback preserved.

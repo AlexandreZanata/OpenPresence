@@ -32,7 +32,9 @@ coverage/
 !**/src/**/build/
 
 # ONNX model weights (download separately — see docs/BIOMETRICS.md)
-models/
+models/*
+!models/MANIFEST.json
+!models/.gitkeep
 
 # Rust build artifacts
 **/target/

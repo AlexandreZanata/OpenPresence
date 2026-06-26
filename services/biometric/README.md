@@ -17,6 +17,15 @@ gRPC service for face liveness ensemble and embedding extraction. Internal-only 
 
 Stub mode uses deterministic pipeline math for local dev and CI without downloading AuraFace / MiniFASNet weights.
 
+Download production weights:
+
+```bash
+./scripts/download-models.sh
+./scripts/verify-models.sh
+```
+
+See `models/MANIFEST.json` and `docs/BIOMETRICS.md`.
+
 ## Commands
 
 ```bash

@@ -75,17 +75,27 @@ CameraFrame (JPEG/WebP)
 
 ## Model files (not in git)
 
-Store under `models/` locally:
+Weights are **not** committed. Download with checksum verification:
+
+```bash
+./scripts/download-models.sh
+./scripts/verify-models.sh
+```
+
+Manifest: `models/MANIFEST.json` (URLs, SHA-256, license notes).
+
+Expected layout after download:
 
 ```
 models/
-├── auraface.onnx
-├── retinaface.onnx
-├── minifasnet_v2.onnx
-└── minifasnet_v1se.onnx
+├── MANIFEST.json          # committed — URLs + hashes
+├── auraface.onnx          # gitignored — recognition (AuraFace glintr100)
+├── retinaface.onnx        # gitignored — detection (SCRFD from AuraFace bundle)
+├── minifasnet_v2.onnx     # gitignored — liveness scale 2.7
+└── minifasnet_v1se.onnx   # gitignored — liveness scale 4.0
 ```
 
-Add `models/` to `.gitignore` when implementation starts.
+Set `ONNX_MODELS_PATH=./models` and `BIOMETRIC_USE_STUB=false` for ONNX inference (task 13).
 
 ## License summary
 

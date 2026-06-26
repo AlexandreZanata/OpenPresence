@@ -30,6 +30,8 @@ pip install -r agent-harness/requirements.txt
 ./scripts/verify-scaffold.sh          # Go attendance layout
 ./scripts/verify-geofence.sh          # Geofence domain tests + coverage
 ./scripts/verify-biometric.sh         # Rust biometric gRPC + health
+./scripts/download-models.sh          # ONNX weights (AuraFace, SCRFD, MiniFASNet)
+./scripts/verify-models.sh            # SHA-256 check against models/MANIFEST.json
 ./scripts/verify-mobile.sh            # KMP PunchViewModel + layer checks
 ./scripts/verify-rls.sh             # PostgreSQL RLS + testcontainers integration
 ./agent-harness/resolve-rules.sh api endpoint auth
@@ -56,6 +58,8 @@ scripts/
   verify-scaffold.sh    # Manual Go layout + toolchain verification
   verify-geofence.sh    # Geofence domain tests + layer isolation
   verify-biometric.sh   # Manual Rust gRPC server + health checks
+  download-models.sh    # Fetch ONNX weights with SHA-256 verification
+  verify-models.sh      # Validate models/ against MANIFEST.json
   verify-mobile.sh      # KMP shared tests + PunchState contract checks
   verify-rls.sh         # PostgreSQL RLS migrations + tenant isolation tests
 .local/                 # Local AI tasks (gitignored)
