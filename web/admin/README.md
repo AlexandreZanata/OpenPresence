@@ -34,7 +34,12 @@ Mock login (when `VITE_AUTH_MOCK=true`): registration `admin` / password `admin`
 ```bash
 npm run auth-smoke
 ./scripts/verify-admin-auth.sh
+./scripts/verify-admin-login.sh
 ```
+
+## Login (`/login`)
+
+TanStack Form with `registrationId` + `password`. Mock: `admin` / `admin`. Redirects to `/dashboard` (or `?redirect=`).
 
 ## Scripts
 

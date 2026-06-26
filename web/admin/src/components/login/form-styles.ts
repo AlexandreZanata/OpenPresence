@@ -1,0 +1,50 @@
+import type { CSSProperties } from 'react'
+
+export const loginPageStyles: Record<string, CSSProperties> = {
+  page: {
+    minHeight: '100vh',
+    display: 'grid',
+    placeItems: 'center',
+    padding: '1.5rem',
+    fontFamily: 'system-ui, sans-serif',
+    background: '#fafafa',
+  },
+  card: {
+    width: '100%',
+    maxWidth: 400,
+    padding: '2rem',
+    borderRadius: 12,
+    background: '#fff',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+  },
+  title: { fontSize: '1.5rem', margin: '0 0 0.25rem' },
+  subtitle: { color: '#666', margin: '0 0 1.5rem', fontSize: '0.95rem' },
+  form: { display: 'grid', gap: '1rem' },
+  label: { display: 'grid', gap: '0.35rem', fontSize: '0.9rem', fontWeight: 500 },
+  input: {
+    padding: '0.6rem 0.75rem',
+    fontSize: '1rem',
+    borderRadius: 6,
+    border: '1px solid #d4d4d8',
+  },
+  inputInvalid: { borderColor: '#b91c1c' },
+  fieldError: { color: '#b91c1c', fontSize: '0.85rem', margin: 0 },
+  apiError: {
+    color: '#b91c1c',
+    background: '#fef2f2',
+    padding: '0.75rem',
+    borderRadius: 6,
+    margin: 0,
+    fontSize: '0.9rem',
+  },
+  button: {
+    padding: '0.65rem 1rem',
+    fontSize: '1rem',
+    borderRadius: 6,
+    border: 'none',
+    background: '#18181b',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  buttonDisabled: { opacity: 0.6, cursor: 'not-allowed' },
+}
