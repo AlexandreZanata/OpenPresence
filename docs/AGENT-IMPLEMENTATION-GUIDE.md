@@ -78,6 +78,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Invariants:** single root, no cycles, valid parent-child types.
 
+**Status:** implemented — see `services/attendance/internal/domain/organization/` and `./scripts/verify-organization.sh`.
+
 ## Task 06 — AttendancePolicy inheritance (Go)
 
 **Goal:** `AttendancePolicy` VO with merge along org ancestors. Presets for public administration vs private enterprise.

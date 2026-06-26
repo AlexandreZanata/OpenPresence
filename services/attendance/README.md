@@ -7,6 +7,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | Package | Responsibility |
 |---------|----------------|
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
+| `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`) — type rules, cycles, orphans |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
 | `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant` transactions |
@@ -22,6 +23,7 @@ go test ./...
 go vet ./...
 go test -tags=integration ./internal/infrastructure/postgres/...
 go test -cover ./internal/domain/geofence/...
+go test -cover ./internal/domain/organization/...
 ```
 
 From repo root:
@@ -29,6 +31,7 @@ From repo root:
 ```bash
 ./scripts/verify-scaffold.sh
 ./scripts/verify-geofence.sh
+./scripts/verify-organization.sh
 ./scripts/verify-rls.sh
 ```
 
@@ -42,5 +45,6 @@ RLS policies use `current_setting('app.tenant_id')::uuid`. Application queries m
 
 - `docs/DATA-MODEL.md` — tables and RLS pattern
 - `docs/SECURITY.md` — multi-tenancy
+- `docs/ORGANIZATION.md` — hierarchy examples and node types
 - `docs/BUSINESS-RULES.md` — BR-010–BR-024
 - `docs/ARCHITECTURE.md` — service map
