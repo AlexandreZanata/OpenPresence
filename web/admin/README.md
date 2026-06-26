@@ -12,12 +12,29 @@ Web administrative UI built with [TanStack Start](https://tanstack.com/start), [
 
 ```bash
 cd web/admin
+npm install          # required — node_modules is gitignored
 cp .env.example .env.local
-npm install
 npm run dev
 ```
 
 Open http://localhost:5174
+
+Mock login (when `VITE_AUTH_MOCK=true`): registration `admin` / password `admin`.
+
+## Auth (admin-02)
+
+| Module | Purpose |
+|--------|---------|
+| `src/lib/auth/AuthProvider.tsx` | React context + `useAuth()` |
+| `src/lib/auth/storage.ts` | Session in `localStorage` (dev only) |
+| `src/lib/auth/dev-mock.ts` | Mock login until auth service |
+| `src/lib/api/client.ts` | `fetch` + Bearer + API error envelope |
+| `src/client.tsx` | Injects `auth` into `RouterProvider` context |
+
+```bash
+npm run auth-smoke
+./scripts/verify-admin-auth.sh
+```
 
 ## Scripts
 

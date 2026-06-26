@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
+import type { AuthState } from '~/lib/auth/types'
 import {
   Outlet,
   Scripts,
@@ -9,6 +10,7 @@ import {
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
+  auth: AuthState
 }>()({
   head: () => ({
     meta: [

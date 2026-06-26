@@ -22,6 +22,7 @@ venv/
 # Node / build artifacts (add stack-specific entries as the project grows)
 node_modules/
 dist/
+*.tsbuildinfo
 build/
 coverage/
 

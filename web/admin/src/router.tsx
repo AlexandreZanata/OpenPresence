@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { createRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
+import { createGuestAuthState } from '~/lib/auth/guest-state'
 import { routeTree } from './routeTree.gen'
 
 export function getRouter() {
@@ -8,7 +9,10 @@ export function getRouter() {
 
   const router = createRouter({
     routeTree,
-    context: { queryClient },
+    context: {
+      queryClient,
+      auth: createGuestAuthState(),
+    },
     defaultPreloadStaleTime: 0,
     scrollRestoration: true,
   })
