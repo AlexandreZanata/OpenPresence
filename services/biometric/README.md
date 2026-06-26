@@ -40,6 +40,7 @@ From repo root:
 
 ```bash
 ./scripts/verify-biometric.sh
+./scripts/verify-biometric-e2e.sh
 ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 ./scripts/verify-enrollment.sh
 ```
@@ -57,7 +58,7 @@ gRPC `EnrollFace` rejects captures when `liveness_score < 0.85` (BR-002) or `qua
 
 ## Proto
 
-`proto/biometric.proto` — package `openpresence.biometric.v1`. See `docs/API-CONTRACT.md`.
+`proto/biometric.proto` — package `openpresence.biometric.v1`. Go client stubs: `services/attendance/internal/infrastructure/biometric/pb/` (regenerate via `./scripts/generate-biometric-proto.sh`). See `docs/API-CONTRACT.md`.
 
 ## Related docs
 

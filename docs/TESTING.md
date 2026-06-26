@@ -225,6 +225,24 @@ ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 
 Build with ONNX Runtime: `cargo test --features onnx` in `services/biometric/`.
 
+## Biometric stack E2E — Attendance gRPC client (Go)
+
+`internal/infrastructure/biometric.Client` dials the Rust `biometric-server` over gRPC. Integration tests spawn the server subprocess and exercise SubmitPunch with real network I/O.
+
+| Test | Rule |
+|------|------|
+| `TestSubmitPunch_E2E_BiometricGrpc_BR010_ValidPunch` | BR-010 valid punch via live VerifyPunch |
+| `TestSubmitPunch_E2E_BiometricGrpc_BR010_LowLiveness_REJECTED` | BR-010 liveness failure from stub processor |
+| `TestBiometricGrpc_E2E_BR002_EnrollLivenessRejected` | BR-002 enroll liveness < 0.85 rejected |
+
+Proto codegen: `./scripts/generate-biometric-proto.sh` (requires `protoc`).
+
+Manual verification (stub + Attendance integration; ONNX optional when `models/auraface.onnx` exists):
+
+```bash
+./scripts/verify-biometric-e2e.sh
+```
+
 ## Enrollment E2E tests (Rust gRPC)
 
 Implemented in `services/biometric/tests/enrollment_e2e.rs`:

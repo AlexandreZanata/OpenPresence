@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package openpresence.biometric.v1;
 
+option go_package = "github.com/AlexandreZanata/OpenPresence/services/attendance/internal/infrastructure/biometric/pb;biometricpb";
+
 service BiometricService {
   rpc VerifyPunch(VerifyPunchRequest) returns (VerifyPunchResponse);
   rpc EnrollFace(EnrollFaceRequest) returns (EnrollFaceResponse);
