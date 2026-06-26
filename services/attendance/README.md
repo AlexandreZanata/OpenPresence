@@ -41,6 +41,7 @@ From repo root:
 ```bash
 ./scripts/verify-scaffold.sh
 ./scripts/verify-geofence.sh
+./scripts/verify-geofence-e2e.sh
 ./scripts/verify-organization.sh
 ./scripts/verify-attendance-policy.sh
 ./scripts/verify-workforce-placement.sh

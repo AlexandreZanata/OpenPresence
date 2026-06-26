@@ -41,6 +41,7 @@ type integrationEnv struct {
 type integrationOpts struct {
 	biometric apppunch.BiometricClient
 	clock     func() time.Time
+	zones     []geofence.GeofenceZone
 }
 
 func defaultIntegrationOpts() integrationOpts {
@@ -76,6 +77,13 @@ func newIntegrationEnv(t *testing.T) integrationEnv {
 	return newIntegrationEnvWithOpts(t, defaultIntegrationOpts())
 }
 
+func newIntegrationEnvWithZones(t *testing.T, zones []geofence.GeofenceZone) integrationEnv {
+	t.Helper()
+	opts := defaultIntegrationOpts()
+	opts.zones = zones
+	return newIntegrationEnvWithOpts(t, opts)
+}
+
 func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEnv {
 	t.Helper()
 	adminDB, appDB := startPostgres(t)
@@ -85,6 +93,11 @@ func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEn
 	empRepo := postgres.NewEmployeeRepository(appDB)
 	punchRepo := postgres.NewPunchRepository(appDB)
 
+	zones := opts.zones
+	if zones == nil {
+		zones = []geofence.GeofenceZone{testZone()}
+	}
+
 	handler := apppunch.SubmitPunchHandler{
 		Employees: employeeReaderAdapter{repo: empRepo},
 		Placements: &stubPlacementReader{placement: &workforce.EmployeePlacement{
@@ -93,7 +106,7 @@ func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEn
 			ValidFrom: serverTime.Add(-time.Hour),
 		}},
 		Policies:  &stubPolicyReader{policy: organization.DefaultPolicy()},
-		Geofences: &stubGeofenceReader{zones: []geofence.GeofenceZone{testZone()}},
+		Geofences: &stubGeofenceReader{zones: zones},
 		Biometric: opts.biometric,
 		Punches:   punchRepo,
 		Validator: domainpunch.PunchValidator{},

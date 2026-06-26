@@ -113,6 +113,25 @@ Write geofence tests **before** implementation (TDD). See AGENT Task 02.
 
 Implemented in `services/attendance/internal/domain/geofence/`.
 
+## Geofence E2E tests — SubmitPunch integration (Go)
+
+Implemented in `services/attendance/internal/application/punch/submit_punch_geofence_e2e_integration_test.go`:
+
+| Test | Rule |
+|------|------|
+| `TestSubmitPunch_E2E_Geofence_BR020_CircleInside_VALID` | BR-020 circle inside |
+| `TestSubmitPunch_E2E_Geofence_BR020_CircleOutside_REJECTED` | BR-020 circle outside |
+| `TestSubmitPunch_E2E_Geofence_BR021_PolygonInside_VALID` | BR-021 polygon inside |
+| `TestSubmitPunch_E2E_Geofence_BR022_LowAccuracyFlag_VALID` | BR-022 GPS_LOW_ACCURACY flag, still VALID |
+| `TestSubmitPunch_E2E_Geofence_BR023_AnyAssignedZone_VALID` | BR-023 match any assigned zone |
+| `TestSubmitPunch_E2E_Geofence_BR024_ExpiredZoneIgnored_REJECTED` | BR-024 expired zone ignored |
+
+Manual verification (domain + Postgres integration):
+
+```bash
+./scripts/verify-geofence-e2e.sh
+```
+
 ## Domain tests — WorkSchedule (Go)
 
 Implemented in `services/attendance/internal/domain/workforce/`:
