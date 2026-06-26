@@ -8,7 +8,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 |---------|----------------|
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`), `AttendancePolicy`, ABAC subtree rules |
-| `internal/application/authorization` | `PunchAuthorizationService` — manager/HR/auditor gates |
+| `internal/application/authorization` | `PunchAuthorizationService`, `AuthorizePunchApprovalHandler` — manager/HR/auditor gates |
 | `internal/application/attendance` | `CalculateDayAttendanceHandler` — BR-030–034 from punches in DB |
 | `internal/application/punch` | `SubmitPunchHandler` — placement → policy → geofence → biometric → validate → fraud → lockout → persist |
 | `internal/domain/punch` | `PunchRecord`, `PunchValidator` — BR-010–BR-015 |
@@ -30,6 +30,7 @@ go vet ./...
 go test -tags=integration ./internal/infrastructure/postgres/...
 go test -tags=integration ./internal/application/punch/...
 go test -tags=integration ./internal/application/punch/... -run E2E
+go test -tags=integration ./internal/application/authorization/... -run E2E
 go test -cover ./internal/domain/geofence/...
 go test -cover ./internal/domain/organization/...
 go test -cover ./internal/domain/punch/...
@@ -53,6 +54,7 @@ From repo root:
 ./scripts/verify-fraud.sh
 ./scripts/verify-fraud-e2e.sh
 ./scripts/verify-authorization.sh
+./scripts/verify-authorization-e2e.sh
 ./scripts/verify-rls.sh
 ```
 

@@ -97,6 +97,25 @@ Manual verification:
 ./scripts/verify-authorization.sh
 ```
 
+## Authorization E2E tests — ApprovePunch integration (Go)
+
+`AuthorizePunchApprovalHandler` wires Postgres `EmployeeRepository`, placement resolution, and `PunchAuthorizationService` ABAC checks.
+
+Implemented in `services/attendance/internal/application/authorization/approve_punch_integration_test.go`:
+
+| Test | Expectation |
+|------|-------------|
+| `TestPunchAuthorization_E2E_ManagerApprovesNurseInSubtree` | Health manager approves nurse in nursing subtree |
+| `TestPunchAuthorization_E2E_ManagerRejectsEducationEmployee` | Cross-secretariat approval denied |
+| `TestPunchAuthorization_E2E_AuditorWriteDenied` | Auditor read allowed, write denied |
+| `TestPunchAuthorization_E2E_CrossTenantActorDenied` | Cross-tenant actor rejected |
+
+Manual verification (domain unit + Postgres integration):
+
+```bash
+./scripts/verify-authorization-e2e.sh
+```
+
 ## Model download (ONNX)
 
 | Script | Expectation |

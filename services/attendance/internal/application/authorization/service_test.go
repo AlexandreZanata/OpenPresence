@@ -26,23 +26,8 @@ func (s stubTreeReader) Tree(tenantID string) (*organization.OrgTree, error) {
 	return tree, nil
 }
 
-func municipalTree(t *testing.T) *organization.OrgTree {
-	t.Helper()
-	nodes := []organization.OrgNode{
-		{ID: "health", TenantID: tenant, Type: organization.OrgNodeTypeDivision, Name: "Health"},
-		{ID: "nursing", TenantID: tenant, ParentID: "health", Type: organization.OrgNodeTypeDepartment, Name: "Nursing"},
-		{ID: "education", TenantID: tenant, Type: organization.OrgNodeTypeDivision, Name: "Education"},
-		{ID: "school-a", TenantID: tenant, ParentID: "education", Type: organization.OrgNodeTypeLocation, Name: "School A"},
-	}
-	tree, err := organization.BuildTree(tenant, nodes)
-	if err != nil {
-		t.Fatalf("build tree: %v", err)
-	}
-	return tree
-}
-
 func TestPunchAuthorizationService_ApproveHealthManager(t *testing.T) {
-	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t)}})
+	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t, tenant)}})
 	actor := organization.ActorScope{Role: organization.RoleManager, TenantID: tenant, AssignedOrgNodeID: "health"}
 	placement := organization.EmployeePlacementRef{EmployeeID: "nurse-1", TenantID: tenant, OrgNodeID: "nursing"}
 
@@ -53,7 +38,7 @@ func TestPunchAuthorizationService_ApproveHealthManager(t *testing.T) {
 }
 
 func TestPunchAuthorizationService_RejectCrossSecretariat(t *testing.T) {
-	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t)}})
+	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t, tenant)}})
 	actor := organization.ActorScope{Role: organization.RoleManager, TenantID: tenant, AssignedOrgNodeID: "health"}
 	placement := organization.EmployeePlacementRef{EmployeeID: "teacher-1", TenantID: tenant, OrgNodeID: "school-a"}
 
@@ -64,7 +49,7 @@ func TestPunchAuthorizationService_RejectCrossSecretariat(t *testing.T) {
 }
 
 func TestPunchAuthorizationService_AuditorReadNoWrite(t *testing.T) {
-	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t)}})
+	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t, tenant)}})
 	actor := organization.ActorScope{Role: organization.RoleAuditor, TenantID: tenant}
 	placement := organization.EmployeePlacementRef{EmployeeID: "nurse-1", TenantID: tenant, OrgNodeID: "nursing"}
 
@@ -78,7 +63,7 @@ func TestPunchAuthorizationService_AuditorReadNoWrite(t *testing.T) {
 }
 
 func TestPunchAuthorizationService_CrossTenantDenied(t *testing.T) {
-	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t)}})
+	svc := appauth.NewPunchAuthorizationService(stubTreeReader{trees: map[string]*organization.OrgTree{tenant: municipalTree(t, tenant)}})
 	actor := organization.ActorScope{Role: organization.RoleSuperAdmin, TenantID: "other-tenant"}
 	placement := organization.EmployeePlacementRef{EmployeeID: "nurse-1", TenantID: tenant, OrgNodeID: "nursing"}
 
