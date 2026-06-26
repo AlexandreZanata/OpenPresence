@@ -77,6 +77,30 @@ func (r *PunchRepository) Save(
 	})
 }
 
+// PunchesForDay returns VALID punches for a calendar day ordered by punched_at ASC.
+func (r *PunchRepository) PunchesForDay(
+	ctx context.Context,
+	tenantID, employeeID uuid.UUID,
+	day time.Time,
+) ([]domainpunch.PunchRecord, error) {
+	start := time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, time.UTC)
+	end := start.Add(24 * time.Hour)
+	var rows []punchRow
+	err := WithTenant(ctx, r.db, tenantID, func(tx *sqlx.Tx) error {
+		return tx.SelectContext(ctx, &rows, `
+			SELECT id, tenant_id, employee_id, punch_type, punched_at, status
+			FROM punch_records
+			WHERE employee_id = $1
+			  AND punched_at >= $2 AND punched_at < $3
+			  AND status = 'VALID'
+			ORDER BY punched_at ASC`, employeeID, start, end)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("punches for day: %w", err)
+	}
+	return rowsToDomain(rows), nil
+}
+
 // CountByStatus counts punch rows for an employee with the given status.
 func (r *PunchRepository) CountByStatus(
 	ctx context.Context,

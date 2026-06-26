@@ -9,6 +9,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`), `AttendancePolicy`, ABAC subtree rules |
 | `internal/application/authorization` | `PunchAuthorizationService` — manager/HR/auditor gates |
+| `internal/application/attendance` | `CalculateDayAttendanceHandler` — BR-030–034 from punches in DB |
 | `internal/application/punch` | `SubmitPunchHandler` — placement → policy → geofence → biometric → validate → fraud → lockout → persist |
 | `internal/domain/punch` | `PunchRecord`, `PunchValidator` — BR-010–BR-015 |
 | `internal/domain/fraud` | `FraudEvaluator`, `DeviceLockoutTracker` — BR-012–013 |
@@ -46,6 +47,7 @@ From repo root:
 ./scripts/verify-attendance-policy.sh
 ./scripts/verify-workforce-placement.sh
 ./scripts/verify-work-schedule.sh
+./scripts/verify-work-schedule-e2e.sh
 ./scripts/verify-punch.sh
 ./scripts/verify-punch-usecase.sh
 ./scripts/verify-fraud.sh
