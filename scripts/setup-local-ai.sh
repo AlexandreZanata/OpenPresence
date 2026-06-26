@@ -25,15 +25,129 @@ echo "RESTORED $ROOT/.cursor/rules/"
 
 # --- .local skeleton (never overwrite existing files) ---
 mkdir -p "$ROOT/.local/tasks" "$ROOT/.local/overrides" "$ROOT/.local/phases"
-SEED="$ROOT/scripts/local-phases-seed"
-if [[ -d "$SEED" ]]; then
-  if command -v rsync >/dev/null 2>&1; then
-    rsync -a --ignore-existing "$SEED/" "$ROOT/.local/phases/"
-  else
-    cp -an "$SEED/." "$ROOT/.local/phases/" 2>/dev/null || cp -rn "$SEED/." "$ROOT/.local/phases/"
+
+ensure_phases_template() {
+  local tpl="$ROOT/.local/phases/_template"
+  mkdir -p "$tpl"
+  if [[ ! -f "$tpl/README.md" ]]; then
+    cat > "$tpl/README.md" <<'EOF'
+# Task: _(short title)_
+
+**Status:** pending | active | done  
+**Phase ID:** task-NN-_(slug)_
+
+## Goal
+
+_(one paragraph — what “done” looks like)_
+
+## Scope
+
+**In scope:**
+
+- _(bullet)_
+
+**Out of scope:**
+
+- _(bullet)_
+
+## Acceptance
+
+- All steps in [tasks.md](tasks.md) marked `[x]`
+- _(measurable outcomes)_
+
+## Agent entry
+
+1. [official_source.md](official_source.md)
+2. [tasks.md](tasks.md)
+EOF
+    echo "CREATED $tpl/README.md"
   fi
-  echo "SEEDED $ROOT/.local/phases/ (from scripts/local-phases-seed, existing files kept)"
-fi
+  if [[ ! -f "$tpl/official_source.md" ]]; then
+    cat > "$tpl/official_source.md" <<'EOF'
+# Official sources — _(task title)_
+
+## Repository documentation
+
+| Document | Path |
+|----------|------|
+| _(name)_ | `docs/...` |
+
+## Agent rules
+
+```bash
+./agent-harness/resolve-rules.sh <keywords>
+```
+
+## Business rules
+
+| ID | File |
+|----|------|
+| BR-xxx | `docs/BUSINESS-RULES.md` |
+
+## Glossary terms
+
+- _(term from docs/GLOSSARY.md)_
+EOF
+    echo "CREATED $tpl/official_source.md"
+  fi
+  if [[ ! -f "$tpl/tasks.md" ]]; then
+    cat > "$tpl/tasks.md" <<'EOF'
+# Tasks — _(short title)_
+
+## Preparation
+
+- [ ] Read [README.md](README.md) and [official_source.md](official_source.md)
+- [ ] Run `./agent-harness/resolve-rules.sh <keywords>`
+
+## Implementation
+
+- [ ] _(step 1)_
+
+## Validation
+
+- [ ] Tests pass: `_(command)_`
+
+## Completion
+
+- [ ] All steps above marked `[x]`
+- [ ] Update `.local/phases/README.md` active task
+EOF
+    echo "CREATED $tpl/tasks.md"
+  fi
+}
+
+ensure_phases_readme() {
+  local readme="$ROOT/.local/phases/README.md"
+  if [[ ! -f "$readme" ]]; then
+    cat > "$readme" <<'EOF'
+# Implementation phases (local)
+
+> **Gitignored** — phases never go to the repository. Each machine maintains its own copy.
+
+## Active task
+
+**Current:** _(set active task folder)_
+
+## Workflow
+
+1. Open the active task folder under `.local/phases/`.
+2. Read `README.md` → `official_source.md` → `tasks.md`.
+3. Run `./agent-harness/resolve-rules.sh` with keywords from `official_source.md`.
+4. Mark `[x]` in `tasks.md` only after real validation.
+5. Update this file when moving to the next task.
+
+## New task
+
+Copy `_template/` to `task-NN-short-name/` and fill the three files.
+
+See `docs/IMPLEMENTATION-ROADMAP.md` for the high-level backend phase map.
+EOF
+    echo "CREATED $readme"
+  fi
+}
+
+ensure_phases_template
+ensure_phases_readme
 
 for f in README.md ROADMAP.md tasks/README.md tasks/current.md context.md overrides/README.md; do
   dest="$ROOT/.local/$f"
@@ -48,7 +162,7 @@ Machine-local files for coding agents. Not versioned — each developer maintain
 
 | Path | Purpose |
 |------|---------|
-| `phases/` | Active implementation tasks (README + official_source + tasks.md) |
+| `phases/` | Implementation tasks (README + official_source + tasks.md) — **never in git** |
 | `tasks/` | Pointer to active phase (`current.md`) |
 | `context.md` | Session context, decisions, scratch notes |
 | `overrides/` | Optional rules that layer on `agent-rules/` |
@@ -56,7 +170,7 @@ Machine-local files for coding agents. Not versioned — each developer maintain
 
 Official rules: `agent-rules/` — do not duplicate the full tree here.
 
-Phases are restored from `scripts/local-phases-seed/` via `./scripts/setup-local-ai.sh`.
+Run `./scripts/setup-local-ai.sh` after clone to restore `.cursor/rules/` and local skeleton.
 EOF
         ;;
       ROADMAP.md)
@@ -65,29 +179,9 @@ EOF
 
 > Local progress tracker. One step at a time; validate before moving on.
 
-## Phase 0 — Project bootstrap
+See `docs/IMPLEMENTATION-ROADMAP.md` for the enterprise backend phase map (tasks 05–14).
 
-- [x] Agent Harness installed (`agent-rules/`, `agent-harness/`)
-- [x] Docs templates created (`docs/`)
-- [x] Local AI workspace (`.local/`, `.cursor/`)
-- [ ] NEW-PROJECT-CHECKLIST completed
-- [ ] Glossary and API contract filled
-- [ ] Stack and repo structure decided
-
-## Phase 1 — Domain definition
-
-- [ ] Entities, aggregates, and value objects documented
-- [ ] Business rules (GIVEN/WHEN/THEN)
-- [ ] State machines for multi-status entities
-- [ ] Use cases in `docs/use-cases/`
-
-## Phase 2 — Implementation
-
-- [ ] _(add milestones as the project evolves)_
-
----
-
-See `docs/NEW-PROJECT-CHECKLIST.md` for the full pre-coding checklist.
+Phases with checklists live in `.local/phases/` only.
 EOF
         ;;
       tasks/README.md)
@@ -114,9 +208,9 @@ _(what to accomplish in this session)_
 
 ## Context
 
+- Active phase: `.local/phases/README.md`
 - Rules: `./agent-harness/resolve-rules.sh <keywords>`
 - Glossary: `docs/GLOSSARY.md`
-- Checklist: `docs/NEW-PROJECT-CHECKLIST.md`
 
 ## Acceptance criteria
 
@@ -167,7 +261,7 @@ cat <<EOF
 Local AI setup complete.
 
   .cursor/rules/  — Cursor validation rules (from harness bundle)
-  .local/         — tasks, phases, context, overrides
+  .local/         — tasks, phases, context, overrides (gitignored)
 
 Next: open .local/phases/README.md and start the active task.
 

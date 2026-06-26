@@ -37,6 +37,7 @@ Never hardcode `rules/` — this project uses `agent-rules/`.
 
 | Path | Purpose |
 |------|---------|
+| `.local/phases/` | Implementation tasks (README + official_source + tasks.md) — **local only, never in git** |
 | `.local/tasks/current.md` | Active task — read at session start |
 | `.local/context.md` | Decisions and open questions |
 | `.local/overrides/` | Optional rules on top of `agent-rules/` |
@@ -96,12 +97,13 @@ Load **2–6 files only** — not the entire rule tree.
 ## Agent protocol
 
 1. Run `./agent-harness/rules-path.sh` → `agent-rules/`.
-2. Read `.local/tasks/current.md` if it exists.
-3. Identify task keywords → run `resolve-rules.sh`.
-4. State which rule files you loaded (brief list).
-5. **ASK** if `docs/NEW-PROJECT-CHECKLIST.md` items are blank — never assume business rules.
-6. Smallest diff; one logical change per commit.
-7. Verify after each edit — do not claim tests passed without running them.
+2. Read `.local/phases/README.md` and the active task folder if present.
+3. Read `.local/tasks/current.md` if it exists.
+4. Identify task keywords → run `resolve-rules.sh`.
+5. State which rule files you loaded (brief list).
+6. **ASK** if `docs/NEW-PROJECT-CHECKLIST.md` items are blank — never assume business rules.
+7. Smallest diff; one logical change per commit.
+8. Verify after each edit — do not claim tests passed without running them.
 
 ---
 
