@@ -4,6 +4,14 @@
 
 Placeholder at `infra/docker-compose.yml` — services are commented until each microservice exists. Uncomment incrementally per [STACK.md](STACK.md).
 
+**UC-001 E2E stack** (Postgres + attendance HTTP + biometric gRPC): `infra/docker-compose.e2e.yml`
+
+```bash
+docker compose -f infra/docker-compose.e2e.yml up -d --wait
+./scripts/verify-uc001-e2e.sh --curl
+docker compose -f infra/docker-compose.e2e.yml down
+```
+
 Target stack (when enabled):
 
 ```yaml

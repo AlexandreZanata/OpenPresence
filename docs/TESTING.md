@@ -310,14 +310,27 @@ Postgres + RLS + stub placement/policy/geofence + live `biometric-server` gRPC (
 
 Requires Docker, Cargo, and biometric fixtures under `services/biometric/tests/fixtures/`.
 
-## Integration tests — Punch API
+## Integration tests — Punch API (UC-001)
+
+Implemented in `services/attendance/internal/interfaces/httpapi/punch_api_uc001_integration_test.go`:
 
 | Test | Scope |
 |------|-------|
-| `TestPunchAPI_FullValidFlow` | E2E with mocked biometric gRPC |
-| `TestPunchAPI_Unauthorized` | 401 without JWT |
-| `TestPunchAPI_RateLimit` | 429 after burst |
-| `TestPunchAPI_OfflineSync_BulkPunches` | 50 offline punches sync |
+| `TestPunchAPI_UC001_E2E_FullValidFlow` | POST punch → biometric gRPC → 201 VALID + Postgres |
+| `TestPunchAPI_UC001_E2E_Unauthorized` | 401 without bearer token |
+| `TestPunchAPI_UC001_E2E_OutOfGeofence_NoValidPersist` | AF-1 out of geofence → 422, no VALID row |
+| `TestPunchAPI_UC001_E2E_OfflineSync_VALID` | AF-2 offline sync → VALID |
+
+HTTP layer: `internal/interfaces/httpapi/` (`PunchHandler`, E2E bearer `e2e.<tenant>.<employee>`). Server: `cmd/attendance-server`.
+
+Manual verification:
+
+```bash
+./scripts/verify-uc001-e2e.sh
+./scripts/verify-uc001-e2e.sh --curl   # optional: docker compose + curl/httpie
+```
+
+E2E stack: `infra/docker-compose.e2e.yml` (Postgres 5433, attendance 8088, biometric 9090).
 
 ## PostgreSQL RLS tests (Go)
 

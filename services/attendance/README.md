@@ -19,7 +19,9 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 | `internal/application/attendance` | `CalculateDayAttendanceHandler` — BR-030–034 from punches in DB |
 | `internal/infrastructure/biometric` | gRPC client for Rust `BiometricService` (VerifyPunch, EnrollFace) |
 | `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant`, `PunchRepository`, `FaceEmbeddingRepository` |
-| `internal/interfaces` | HTTP handlers (Fiber), DTO mapping |
+| `internal/app` | `PunchStack` wiring for HTTP server and E2E |
+| `internal/interfaces/httpapi` | `POST /v1/attendance/punch`, E2E bearer auth, health |
+| `cmd/attendance-server` | HTTP entrypoint (Postgres + biometric gRPC) |
 
 **Dependency rule:** domain does not import application, infrastructure, or interfaces.
 
@@ -35,6 +37,7 @@ go test -tags=integration ./internal/application/punch/... -run E2E
 go test -tags=integration ./internal/application/authorization/... -run E2E
 go test -tags=integration ./internal/application/enrollment/... -run E2E_RLS
 go test -tags=integration ./internal/application/punch/... -run BiometricGrpc
+go test -tags=integration ./internal/interfaces/httpapi/... -run UC001
 go test -cover ./internal/domain/geofence/...
 go test -cover ./internal/domain/organization/...
 go test -cover ./internal/domain/punch/...
@@ -63,6 +66,7 @@ From repo root:
 ./scripts/verify-rls.sh
 ./scripts/verify-rls-e2e.sh
 ./scripts/verify-biometric-e2e.sh
+./scripts/verify-uc001-e2e.sh
 ```
 
 ## Migrations
