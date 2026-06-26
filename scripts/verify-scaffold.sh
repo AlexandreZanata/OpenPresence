@@ -25,6 +25,7 @@ REQUIRED_DIRS=(
   "$ROOT/infra"
   "$ROOT/infra/k8s"
   "$ROOT/infra/terraform"
+  "$ROOT/web/admin/src"
 )
 
 for dir in "${REQUIRED_DIRS[@]}"; do
@@ -35,7 +36,7 @@ for dir in "${REQUIRED_DIRS[@]}"; do
   fi
 done
 
-for file in "$ROOT/go.work" "$ATTENDANCE/go.mod" "$ROOT/infra/docker-compose.yml"; do
+for file in "$ROOT/go.work" "$ATTENDANCE/go.mod" "$ROOT/infra/docker-compose.yml" "$ROOT/web/admin/package.json"; do
   if [[ -f "$file" ]]; then
     pass "file exists: ${file#$ROOT/}"
   else

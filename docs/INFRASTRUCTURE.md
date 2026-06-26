@@ -25,6 +25,12 @@ Faster iteration than full Docker compile (Rust/Go on host, Postgres in Docker):
 
 Admin panel (planned `web/admin/`): `VITE_API_BASE_URL=http://127.0.0.1:8088`
 
+```bash
+cd web/admin && cp .env.example .env.local && npm install && npm run dev
+```
+
+See `web/admin/README.md`. Verify: `./scripts/verify-admin-scaffold.sh`.
+
 Manual verification:
 
 ```bash

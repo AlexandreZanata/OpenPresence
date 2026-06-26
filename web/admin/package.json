@@ -1,0 +1,26 @@
+{
+  "name": "@openpresence/admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 5174",
+    "build": "vite build && tsc --noEmit",
+    "preview": "vite preview --port 5174"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.0",
+    "@tanstack/react-router": "^1.170.16",
+    "@tanstack/react-router-ssr-query": "^1.167.1",
+    "@tanstack/react-start": "^1.168.26",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^5.7.3",
+    "vite": "^8.0.14"
+  }
+}

@@ -77,6 +77,8 @@ openpresence/
 │   ├── organization/
 │   ├── workforce/
 │   └── biometric/
+├── web/
+│   └── admin/           # TanStack Start admin panel
 ├── mobile/
 │   ├── shared/
 │   ├── androidApp/
