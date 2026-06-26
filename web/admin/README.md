@@ -35,11 +35,20 @@ Mock login (when `VITE_AUTH_MOCK=true`): registration `admin` / password `admin`
 npm run auth-smoke
 ./scripts/verify-admin-auth.sh
 ./scripts/verify-admin-login.sh
+./scripts/verify-admin-guards.sh
 ```
 
 ## Login (`/login`)
 
 TanStack Form with `registrationId` + `password`. Mock: `admin` / `admin`. Redirects to `/dashboard` (or `?redirect=`).
+
+## Router guards (admin-04)
+
+Protected routes live under pathless layout `_authenticated` (`src/routes/_authenticated.tsx`). `beforeLoad` checks `context.auth.isAuthenticated` and redirects guests to `/login?redirect=...`. `/` redirects to `/dashboard` or `/login`; `/login` redirects authenticated users away.
+
+```bash
+./scripts/verify-admin-guards.sh
+```
 
 ## Scripts
 

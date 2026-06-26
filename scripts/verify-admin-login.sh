@@ -17,7 +17,7 @@ echo
 
 for f in \
   src/routes/login.tsx \
-  src/routes/dashboard.tsx \
+  src/routes/_authenticated/dashboard.tsx \
   src/components/login/LoginForm.tsx
 do
   if [[ -f "$ADMIN/$f" ]]; then

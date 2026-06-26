@@ -17,6 +17,9 @@ export const Route = createFileRoute('/login')({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
   beforeLoad: ({ context, search }) => {
+    if (context.auth.isLoading) {
+      return
+    }
     if (context.auth.isAuthenticated) {
       throw redirect({ to: search.redirect ?? '/dashboard' })
     }
@@ -44,7 +47,11 @@ function LoginPage() {
       <div style={styles.card}>
         <h1 style={styles.title}>OpenPresence Admin</h1>
         <p style={styles.subtitle}>Sign in with your registration ID</p>
-        <LoginForm auth={auth} onSuccess={onSuccess} />
+        {auth.isLoading ? (
+          <p>Loading session…</p>
+        ) : (
+          <LoginForm auth={auth} onSuccess={onSuccess} />
+        )}
       </div>
     </div>
   )

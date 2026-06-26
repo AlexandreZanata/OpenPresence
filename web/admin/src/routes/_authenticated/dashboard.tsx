@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/_authenticated/dashboard')({
   component: DashboardPage,
 })
 
@@ -11,13 +11,15 @@ function DashboardPage() {
   return (
     <main style={styles.main}>
       <h1 style={styles.title}>Dashboard</h1>
-      <p style={styles.lead}>
-        {auth.isAuthenticated
-          ? `Welcome, ${auth.user?.displayName ?? 'user'}.`
-          : 'You are not signed in.'}
-      </p>
+      <p style={styles.lead}>Welcome, {auth.user?.displayName ?? 'user'}.</p>
       <p style={styles.hint}>Admin shell layout arrives in admin-05.</p>
-      <Link to="/login">Back to login</Link>
+      <p>
+        <button type="button" style={styles.button} onClick={() => auth.logout()}>
+          Sign out
+        </button>
+        {' · '}
+        <Link to="/login">Back to login</Link>
+      </p>
     </main>
   )
 }
@@ -32,4 +34,11 @@ const styles: Record<string, CSSProperties> = {
   title: { fontSize: '2rem' },
   lead: { color: '#444' },
   hint: { color: '#666', fontSize: '0.9rem' },
+  button: {
+    cursor: 'pointer',
+    padding: '0.35rem 0.75rem',
+    borderRadius: 6,
+    border: '1px solid #ccc',
+    background: '#fff',
+  },
 }
