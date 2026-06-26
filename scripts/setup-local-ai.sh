@@ -24,7 +24,16 @@ fi
 echo "RESTORED $ROOT/.cursor/rules/"
 
 # --- .local skeleton (never overwrite existing files) ---
-mkdir -p "$ROOT/.local/tasks" "$ROOT/.local/overrides"
+mkdir -p "$ROOT/.local/tasks" "$ROOT/.local/overrides" "$ROOT/.local/phases"
+SEED="$ROOT/scripts/local-phases-seed"
+if [[ -d "$SEED" ]]; then
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --ignore-existing "$SEED/" "$ROOT/.local/phases/"
+  else
+    cp -an "$SEED/." "$ROOT/.local/phases/" 2>/dev/null || cp -rn "$SEED/." "$ROOT/.local/phases/"
+  fi
+  echo "SEEDED $ROOT/.local/phases/ (from scripts/local-phases-seed, existing files kept)"
+fi
 
 for f in README.md ROADMAP.md tasks/README.md tasks/current.md context.md overrides/README.md; do
   dest="$ROOT/.local/$f"
@@ -39,12 +48,15 @@ Machine-local files for coding agents. Not versioned — each developer maintain
 
 | Path | Purpose |
 |------|---------|
-| `tasks/` | Active and backlog tasks for AI sessions |
+| `phases/` | Active implementation tasks (README + official_source + tasks.md) |
+| `tasks/` | Pointer to active phase (`current.md`) |
 | `context.md` | Session context, decisions, scratch notes |
 | `overrides/` | Optional rules that layer on `agent-rules/` |
 | `ROADMAP.md` | Implementation progress tracker |
 
 Official rules: `agent-rules/` — do not duplicate the full tree here.
+
+Phases are restored from `scripts/local-phases-seed/` via `./scripts/setup-local-ai.sh`.
 EOF
         ;;
       ROADMAP.md)
@@ -155,8 +167,8 @@ cat <<EOF
 Local AI setup complete.
 
   .cursor/rules/  — Cursor validation rules (from harness bundle)
-  .local/         — tasks, context, overrides
+  .local/         — tasks, phases, context, overrides
 
-Next: fill docs/NEW-PROJECT-CHECKLIST.md before writing application code.
+Next: open .local/phases/README.md and start the active task.
 
 EOF

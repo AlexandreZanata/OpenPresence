@@ -2,8 +2,12 @@
 
 ## Local development (Docker Compose)
 
+Placeholder at `infra/docker-compose.yml` — services are commented until each microservice exists. Uncomment incrementally per [STACK.md](STACK.md).
+
+Target stack (when enabled):
+
 ```yaml
-# infra/docker-compose.yml (to be implemented)
+# infra/docker-compose.yml
 services:
   postgres:
     image: timescale/timescaledb-ha:pg16
@@ -13,11 +17,17 @@ services:
     image: nats:2.10-alpine
     command: -js
   api-gateway:
-    build: ./services/api-gateway
+    build: ../services/api-gateway
+  attendance:
+    build: ../services/attendance
   biometric-service:
-    build: ./services/biometric
-    volumes:
-      - ./models:/models:ro
+    build: ../services/biometric
+```
+
+Verify repo layout before enabling containers:
+
+```bash
+./scripts/verify-scaffold.sh
 ```
 
 Ports (dev): Postgres 5432, Redis 6379, NATS 4222, API 8080, Biometric gRPC 9090.

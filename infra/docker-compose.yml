@@ -1,0 +1,27 @@
+# Local development stack (placeholder)
+#
+# Full stack definition: docs/INFRASTRUCTURE.md
+# Enable services incrementally as each microservice is implemented.
+#
+# version: "3.9"
+# services:
+#   postgres:
+#     image: timescale/timescaledb-ha:pg16
+#     environment:
+#       POSTGRES_PASSWORD: dev_secret
+#     ports: ["5432:5432"]
+#   redis:
+#     image: valkey/valkey:7.2
+#     ports: ["6379:6379"]
+#   nats:
+#     image: nats:2.10-alpine
+#     command: -js
+#     ports: ["4222:4222"]
+#   api-gateway:
+#     build: ../services/api-gateway
+#     ports: ["8080:8080"]
+#   attendance:
+#     build: ../services/attendance
+#   biometric-service:
+#     build: ../services/biometric
+#     ports: ["9090:9090"]

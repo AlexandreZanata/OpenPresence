@@ -27,8 +27,11 @@ Full documentation index: **[docs/README.md](docs/README.md)**
 ```bash
 pip install -r agent-harness/requirements.txt
 ./scripts/setup-local-ai.sh
+./scripts/verify-scaffold.sh          # layout + go build/test/vet
 ./agent-harness/resolve-rules.sh api endpoint auth
 ```
+
+Requires **Go 1.22+** for `services/attendance`.
 
 ## Project layout
 
@@ -36,8 +39,16 @@ pip install -r agent-harness/requirements.txt
 docs/                   # Product and technical documentation
 agent-rules/            # Agent Harness rule library
 agent-harness/          # Rule resolution tooling
-services/               # (planned) Go + Rust microservices
+go.work                 # Go workspace (monorepo)
+services/
+  attendance/           # Attendance bounded context (Go)
+infra/
+  docker-compose.yml    # Local stack placeholder (commented)
+  k8s/                  # Helm charts (planned)
+  terraform/            # IaC (planned)
 mobile/                 # (planned) KMP app
+scripts/
+  verify-scaffold.sh    # Manual layout + toolchain verification
 .local/                 # Local AI tasks (gitignored)
 .cursor/                # Cursor rules (gitignored)
 ```

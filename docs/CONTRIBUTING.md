@@ -15,7 +15,11 @@ pip install -r agent-harness/requirements.txt
 ./scripts/setup-local-ai.sh          # restores .cursor/ and .local/ skeleton
 ```
 
-Install stack tools per [STACK.md](STACK.md).
+Install stack tools per [STACK.md](STACK.md) (Go 1.22+ required).
+
+```bash
+./scripts/verify-scaffold.sh
+```
 
 ## Workflow
 
