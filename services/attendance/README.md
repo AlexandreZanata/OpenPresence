@@ -8,7 +8,7 @@ Go service for the **Attendance** bounded context: punch validation, geofence ru
 |---------|----------------|
 | `internal/domain/geofence` | Geofence validation (Haversine, circle, polygon) — BR-020–BR-024 |
 | `internal/domain/organization` | Org tree (`OrgNode`, `OrgTree`) and `AttendancePolicy` inheritance |
-| `internal/domain/workforce` | Employee placement (*lotação*) — PRIMARY/SECONDARY, transfer rules |
+| `internal/domain/workforce` | Employee placement (*lotação*), `WorkSchedule`, time accounting BR-030–034 |
 | `internal/domain` | PunchRecord, fraud flags (upcoming) |
 | `internal/application` | Use cases, authorization orchestration |
 | `internal/infrastructure/postgres` | sqlx, RLS migrations, `WithTenant` transactions |
@@ -36,6 +36,7 @@ From repo root:
 ./scripts/verify-organization.sh
 ./scripts/verify-attendance-policy.sh
 ./scripts/verify-workforce-placement.sh
+./scripts/verify-work-schedule.sh
 ./scripts/verify-rls.sh
 ```
 
@@ -50,5 +51,5 @@ RLS policies use `current_setting('app.tenant_id')::uuid`. Application queries m
 - `docs/DATA-MODEL.md` — tables and RLS pattern
 - `docs/SECURITY.md` — multi-tenancy
 - `docs/ORGANIZATION.md` — hierarchy examples and node types
-- `docs/BUSINESS-RULES.md` — BR-010–BR-024
+- `docs/BUSINESS-RULES.md` — BR-010–BR-034
 - `docs/ARCHITECTURE.md` — service map

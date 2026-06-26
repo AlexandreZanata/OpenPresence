@@ -47,6 +47,28 @@ Write geofence tests **before** implementation (TDD). See AGENT Task 02.
 
 Implemented in `services/attendance/internal/domain/geofence/`.
 
+## Domain tests — WorkSchedule (Go)
+
+Implemented in `services/attendance/internal/domain/workforce/`:
+
+| Test | Rule |
+|------|------|
+| `TestCalculateWorkedMinutes_BR030_PrivateOfficeWithBreak` | BR-030 in/out minus breaks |
+| `TestCalculateWorkedMinutes_BR030_NursingNightShift` | BR-030 12×36 night shift |
+| `TestCalculateLateness_BR031_TenMinutesInFiveTolerance` | BR-031 lateness after tolerance |
+| `TestCalculateOvertime_BR032_AfterEndPlusTolerance` | BR-032 overtime after end + tolerance |
+| `TestCalculateOvertime_BR032_DisabledWhenPolicyOff` | BR-032 no overtime when disabled |
+| `TestEvaluateWindows_BR033_Shift12x36CrossesMidnight` | BR-033 night window crosses midnight |
+| `TestEvaluateWindows_BR033_SplitShiftIndependentWindows` | BR-033 split shift windows |
+| `TestUpdateTimeBank_BR034_AccumulatesWithTimeBankPolicy` | BR-034 cumulative time bank |
+| `TestUpdateTimeBank_BR034_StandardPolicyNoAccrual` | BR-034 standard policy skips bank |
+
+Manual verification:
+
+```bash
+./scripts/verify-work-schedule.sh
+```
+
 ## Biometric tests (Rust)
 
 Implemented in `services/biometric/`:

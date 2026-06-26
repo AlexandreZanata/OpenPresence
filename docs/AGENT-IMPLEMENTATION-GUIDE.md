@@ -96,6 +96,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** BR-030–034 — worked minutes, lateness, overtime, 12×36 / split shifts, time bank.
 
+**Status:** implemented — see `schedule.go` in `internal/domain/workforce/` and `./scripts/verify-work-schedule.sh`.
+
 ## Task 09 — PunchRecord validation engine (Go)
 
 **Goal:** `PunchValidator` — BR-010–015, punch sequence, anti-duplicate, server timestamp.
