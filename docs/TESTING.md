@@ -165,7 +165,20 @@ Manual verification:
 
 ```bash
 ./scripts/verify-work-schedule.sh
+./scripts/verify-work-schedule-e2e.sh
 ```
+
+## Work schedule E2E tests — CalculateDayAttendance (Go)
+
+Application use case: `internal/application/attendance/CalculateDayAttendanceHandler` loads VALID punches from Postgres and applies BR-030–034.
+
+| Test | Rule |
+|------|------|
+| `TestCalculateDay_E2E_BR030_WorkedMinutesFromDB` | BR-030 worked minutes from seeded punches |
+| `TestCalculateDay_E2E_BR031_LatenessFromDB` | BR-031 lateness after tolerance |
+| `TestCalculateDay_E2E_BR032_OvertimeFromDB` | BR-032 overtime when policy allows |
+| `TestCalculateDay_E2E_BR033_Shift12x36Windows` | BR-033 12×36 window resolution |
+| `TestCalculateDay_E2E_BR034_TimeBankFromDB` | BR-034 cumulative time bank |
 
 ## Biometric tests (Rust)
 
