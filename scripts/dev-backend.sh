@@ -27,13 +27,44 @@ DATABASE_URL="${DATABASE_URL:-postgres://attendance_app:attendance_app@127.0.0.1
 
 mkdir -p "$PID_DIR"
 
+attendance_port() {
+  local p="${ATTENDANCE_URL##*:}"
+  echo "${p%%/*}"
+}
+
+biometric_port() {
+  echo "${BIOMETRIC_GRPC##*:}"
+}
+
+is_listening() {
+  local host="$1" port="$2"
+  (echo >/dev/tcp/"$host"/"$port") 2>/dev/null
+}
+
+kill_port() {
+  local port="$1"
+  if command -v fuser >/dev/null 2>&1; then
+    fuser -k "${port}/tcp" 2>/dev/null || true
+  elif command -v lsof >/dev/null 2>&1; then
+    lsof -ti ":${port}" 2>/dev/null | xargs -r kill 2>/dev/null || true
+  fi
+}
+
+stop_pid_file() {
+  local pid_file="$1"
+  if [[ -f "$pid_file" ]]; then
+    local pid
+    pid="$(cat "$pid_file")"
+    kill "$pid" 2>/dev/null || true
+    rm -f "$pid_file"
+  fi
+}
+
 stop_host() {
-  for f in "$ATTENDANCE_PID" "$BIOMETRIC_PID"; do
-    if [[ -f "$f" ]]; then
-      kill "$(cat "$f")" 2>/dev/null || true
-      rm -f "$f"
-    fi
-  done
+  stop_pid_file "$ATTENDANCE_PID"
+  stop_pid_file "$BIOMETRIC_PID"
+  kill_port "$(attendance_port)"
+  kill_port "$(biometric_port)"
 }
 
 wait_http() {
@@ -52,7 +83,7 @@ wait_http() {
 wait_tcp() {
   local host="$1" port="$2" label="$3" tries="${4:-60}"
   for _ in $(seq 1 "$tries"); do
-    if (echo >/dev/tcp/"$host"/"$port") 2>/dev/null; then
+    if is_listening "$host" "$port"; then
       echo "OK: $label"
       return 0
     fi
@@ -62,18 +93,30 @@ wait_tcp() {
   return 1
 }
 
+service_status() {
+  local name="$1" pid_file="$2" host="$3" port="$4"
+  if [[ -f "$pid_file" ]] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+    echo "RUNNING: $name (pid $(cat "$pid_file"), port $port)"
+    return 0
+  fi
+  if is_listening "$host" "$port"; then
+    echo "RUNNING: $name (port $port, pid file stale)"
+    return 0
+  fi
+  echo "STOPPED: $name"
+  return 1
+}
+
 cmd_status() {
   echo "=== OpenPresence dev backend ==="
   docker compose -f "$COMPOSE_FILE" ps postgres 2>/dev/null || true
-  for name in attendance biometric; do
-    local pid_file="${PID_DIR}/${name}.pid"
-    if [[ -f "$pid_file" ]] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
-      echo "RUNNING: $name (pid $(cat "$pid_file"))"
-    else
-      echo "STOPPED: $name"
-    fi
-  done
-  curl -sf "${ATTENDANCE_URL}/health/live" && echo "health/live: ok" || echo "health/live: down"
+  service_status attendance "$ATTENDANCE_PID" 127.0.0.1 "$(attendance_port)" || true
+  service_status biometric "$BIOMETRIC_PID" 127.0.0.1 "$(biometric_port)" || true
+  if curl -sf "${ATTENDANCE_URL}/health/live" | grep -q '"status":"ok"'; then
+    echo "health/live: ok"
+  else
+    echo "health/live: down"
+  fi
 }
 
 cmd_stop() {
@@ -94,31 +137,28 @@ cmd_start() {
   echo "Starting Postgres (docker)..."
   docker compose -f "$COMPOSE_FILE" up -d postgres --wait
 
-  local grpc_port="${BIOMETRIC_GRPC##*:}"
-  local http_port="${ATTENDANCE_URL##*:}"
-  http_port="${http_port%%/*}"
+  local grpc_port biometrics_http_port http_port
+  grpc_port="$(biometric_port)"
+  biometrics_http_port=$((grpc_port + 1))
+  http_port="$(attendance_port)"
 
   echo "Starting biometric-server (host)..."
-  (
-    cd "${ROOT}/services/biometric"
+  nohup bash -c "cd '${ROOT}/services/biometric' && exec env \
     BIOMETRIC_USE_STUB=true \
-    BIOMETRIC_GRPC_ADDR="0.0.0.0:${grpc_port}" \
-    BIOMETRIC_HTTP_ADDR="127.0.0.1:$((grpc_port + 1))" \
+    BIOMETRIC_GRPC_ADDR='0.0.0.0:${grpc_port}' \
+    BIOMETRIC_HTTP_ADDR='127.0.0.1:${biometrics_http_port}' \
     RUST_LOG=warn \
-      cargo run --quiet --bin biometric-server >>"$BIOMETRIC_LOG" 2>&1
-  ) &
+    cargo run --quiet --bin biometric-server" >>"$BIOMETRIC_LOG" 2>&1 &
   echo $! >"$BIOMETRIC_PID"
 
   wait_tcp 127.0.0.1 "$grpc_port" "biometric gRPC"
 
   echo "Starting attendance-server (host)..."
-  (
-    cd "${ROOT}/services/attendance"
-    DATABASE_URL="$DATABASE_URL" \
-    BIOMETRIC_GRPC_ADDR="$BIOMETRIC_GRPC" \
-    ATTENDANCE_HTTP_ADDR=":${http_port}" \
-      go run ./cmd/attendance-server >>"$ATTENDANCE_LOG" 2>&1
-  ) &
+  nohup bash -c "cd '${ROOT}/services/attendance' && exec env \
+    DATABASE_URL='${DATABASE_URL}' \
+    BIOMETRIC_GRPC_ADDR='${BIOMETRIC_GRPC}' \
+    ATTENDANCE_HTTP_ADDR=':${http_port}' \
+    go run ./cmd/attendance-server" >>"$ATTENDANCE_LOG" 2>&1 &
   echo $! >"$ATTENDANCE_PID"
 
   wait_http "${ATTENDANCE_URL}/health/live" "attendance HTTP"
@@ -131,6 +171,7 @@ cmd_start() {
   Attendance: ${ATTENDANCE_URL}
   Logs:       ${PID_DIR}/*.log
   Stop:       ./scripts/dev-backend.sh stop
+  Verify:     ./scripts/verify-dev-backend.sh
 
 Note: POST /v1/auth/login is not implemented yet — admin panel will use dev auth mock until auth service exists.
 EOF
