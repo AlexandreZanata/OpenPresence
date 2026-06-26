@@ -108,6 +108,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** `FraudEvaluator`, `DeviceLockoutTracker` — BR-012–013, all `FraudType` values.
 
+**Status:** implemented — see `internal/domain/fraud/` and `./scripts/verify-fraud.sh`.
+
 ## Task 11 — Hierarchy authorization (Go)
 
 **Goal:** ABAC subtree checks — manager approves only descendant placements; HR tenant-scoped.

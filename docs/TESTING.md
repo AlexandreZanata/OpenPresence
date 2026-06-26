@@ -42,6 +42,28 @@ Manual verification:
 ./scripts/verify-punch.sh
 ```
 
+## Domain tests — Fraud detection (Go)
+
+Implemented in `services/attendance/internal/domain/fraud/`:
+
+| Test | Rule |
+|------|------|
+| `TestEvaluate_AllGlossaryFraudTypes/*` | each `FraudType` in glossary |
+| `TestEvaluate_MockGPS_HighSeverity` | MOCK_GPS → HIGH |
+| `TestEvaluate_ClockManipulation_MediumOver300s` | clock skew > 300s |
+| `TestEvaluate_ClockManipulation_CriticalOver30Min` | CRITICAL → REJECTED |
+| `TestEvaluate_ImpossibleSpeed_Critical` | > 600 km/h → CRITICAL |
+| `TestEvaluate_DuplicatePunch_Within60s` | duplicate within 60s |
+| `TestEvaluate_GPSLowAccuracy_LowAcceptWithFlag` | BR-022 accept with flag |
+| `TestEvaluate_BR012_SuspiciousWhenNotCritical` | BR-012 non-critical → SUSPICIOUS |
+| `TestDeviceLockoutTracker_BR013_ThreeRejectsInTenMinutes` | BR-013 device lockout |
+
+Manual verification:
+
+```bash
+./scripts/verify-fraud.sh
+```
+
 ## Domain tests — Geofence (Go)
 
 | Test | Case |
