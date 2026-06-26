@@ -30,14 +30,17 @@ See `models/MANIFEST.json` and `docs/BIOMETRICS.md`.
 
 ```bash
 cargo test
+cargo test --features onnx          # includes ONNX unit test (ignored without models)
 cargo clippy -- -D warnings
-cargo run --bin biometric-server
+cargo run --bin biometric-server    # stub when BIOMETRIC_USE_STUB=true or no ONNX_MODELS_PATH
+cargo run --features onnx --bin biometric-server   # ONNX when ONNX_MODELS_PATH is set
 ```
 
 From repo root:
 
 ```bash
 ./scripts/verify-biometric.sh
+ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 ```
 
 ## Ports (default)

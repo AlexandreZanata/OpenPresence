@@ -1,11 +1,10 @@
 use std::net::SocketAddr;
-use std::sync::Arc;
 
-use biometric_service::config::{grpc_addr, http_addr, use_stub_processor};
+use biometric_service::config::{grpc_addr, http_addr};
 use biometric_service::grpc::proto::biometric_service_server::BiometricServiceServer;
 use biometric_service::grpc::BiometricGrpcService;
 use biometric_service::health;
-use biometric_service::StubProcessor;
+use biometric_service::processor::build_processor;
 use tonic::transport::Server;
 use tracing_subscriber::EnvFilter;
 
@@ -15,11 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_env_filter(EnvFilter::from_default_env().add_directive("info".parse()?))
         .init();
 
-    if use_stub_processor() {
-        tracing::warn!("BIOMETRIC_USE_STUB active — ONNX models not required");
-    }
-
-    let processor: Arc<StubProcessor> = Arc::new(StubProcessor::new());
+    let processor = build_processor()?;
     let grpc_service = BiometricGrpcService::new(processor.clone());
 
     let grpc_socket: SocketAddr = grpc_addr().parse()?;

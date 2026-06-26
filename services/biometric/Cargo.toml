@@ -14,7 +14,7 @@ path = "src/bin/server.rs"
 
 [features]
 default = []
-onnx = ["dep:ort", "dep:ndarray"]
+onnx = ["dep:ort"]
 
 [dependencies]
 axum = "0.7"
@@ -28,7 +28,6 @@ tonic = "0.12"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 ort = { version = "2.0.0-rc.12", optional = true }
-ndarray = { version = "0.16", optional = true }
 
 [build-dependencies]
 protoc-bin-vendored = "3"

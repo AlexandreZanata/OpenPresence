@@ -6,4 +6,7 @@ pub mod health;
 pub mod pipeline;
 pub mod processor;
 
-pub use processor::{BiometricProcessor, ProcessorError, StubProcessor};
+pub use processor::{build_processor, BiometricProcessor, ProcessorError, StubProcessor};
+
+#[cfg(feature = "onnx")]
+pub use processor::OnnxProcessor;

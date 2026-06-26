@@ -146,13 +146,20 @@ Implemented in `services/biometric/`:
 | `test_face_recognition_same_person` | similarity >= 0.75 |
 | `test_face_recognition_different_persons` | similarity < 0.65 |
 | `test_cosine_similarity_identical_vectors` | similarity = 1.0 |
+| `real_inference_returns_512_embedding` | ONNX — 512-dim embedding (ignored unless models present) |
 | `grpc_verify_punch_and_enroll_roundtrip` | integration — live gRPC server |
 
 Manual verification (starts server, curls health, checks gRPC port):
 
 ```bash
+# Stub mode (CI default — no models required)
 ./scripts/verify-biometric.sh
+
+# ONNX mode (after ./scripts/download-models.sh)
+ONNX_MODELS_PATH=./models ./scripts/verify-biometric.sh
 ```
+
+Build with ONNX Runtime: `cargo test --features onnx` in `services/biometric/`.
 
 ## Integration tests — Punch API
 

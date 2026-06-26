@@ -3,6 +3,7 @@ use std::time::Duration;
 
 use biometric_service::grpc::proto::biometric_service_client::BiometricServiceClient;
 use biometric_service::grpc::proto::{EnrollFaceRequest, VerifyPunchRequest};
+use biometric_service::processor::BiometricProcessor;
 use biometric_service::{grpc, StubProcessor};
 use image::RgbImage;
 use tokio_stream::wrappers::TcpListenerStream;
@@ -19,7 +20,7 @@ fn tiny_jpeg() -> Vec<u8> {
 
 #[tokio::test]
 async fn grpc_verify_punch_and_enroll_roundtrip() {
-    let processor = Arc::new(StubProcessor::new());
+    let processor: Arc<dyn BiometricProcessor> = Arc::new(StubProcessor::new());
     let grpc_service = grpc::BiometricGrpcService::new(processor);
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let grpc_addr = listener.local_addr().unwrap();

@@ -9,12 +9,12 @@ use super::proto::{
 };
 use crate::processor::{BiometricProcessor, ProcessorError};
 
-pub struct BiometricGrpcService<P: BiometricProcessor> {
-    processor: Arc<P>,
+pub struct BiometricGrpcService {
+    processor: Arc<dyn BiometricProcessor>,
 }
 
-impl<P: BiometricProcessor> BiometricGrpcService<P> {
-    pub fn new(processor: Arc<P>) -> Self {
+impl BiometricGrpcService {
+    pub fn new(processor: Arc<dyn BiometricProcessor>) -> Self {
         Self { processor }
     }
 }
@@ -47,7 +47,7 @@ fn map_processor_error(err: ProcessorError) -> Status {
 }
 
 #[tonic::async_trait]
-impl<P: BiometricProcessor + 'static> BiometricService for BiometricGrpcService<P> {
+impl BiometricService for BiometricGrpcService {
     async fn verify_punch(
         &self,
         request: Request<VerifyPunchRequest>,

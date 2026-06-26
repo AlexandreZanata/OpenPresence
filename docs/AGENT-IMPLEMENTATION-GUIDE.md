@@ -126,6 +126,8 @@ Enable RLS on `employees`, `punch_records`, `face_embeddings`. Policy: `tenant_i
 
 **Goal:** Real RetinaFace + MiniFASNet + AuraFace when models present; stub fallback preserved.
 
+**Status:** implemented — `FaceProcessor` loads four ONNX sessions at startup; `build_processor()` selects stub or ONNX from env. See `./scripts/verify-biometric.sh` and `services/biometric/README.md`.
+
 ## Task 14 — SubmitPunch use case (Go)
 
 **Goal:** Application orchestration — placement → policy → geofence → biometric gRPC → validate → persist with RLS.

@@ -13,7 +13,7 @@ struct HealthBody {
     status: &'static str,
 }
 
-pub fn router<P: BiometricProcessor + 'static>(processor: Arc<P>) -> Router {
+pub fn router(processor: Arc<dyn BiometricProcessor>) -> Router {
     let ready = processor.clone();
     Router::new()
         .route(

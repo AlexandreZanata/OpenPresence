@@ -93,10 +93,14 @@ pub fn passes_enroll_liveness(score: f32) -> bool {
     score >= LIVENESS_THRESHOLD_ENROLL
 }
 
+mod factory;
 mod stub;
-pub use stub::StubProcessor;
 
 #[cfg(feature = "onnx")]
 mod onnx;
+
+pub use factory::build_processor;
+pub use stub::StubProcessor;
+
 #[cfg(feature = "onnx")]
 pub use onnx::OnnxProcessor;
