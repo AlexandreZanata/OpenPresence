@@ -22,6 +22,7 @@ type SubmitPunchCommand struct {
 	DeviceTime    time.Time
 	FrameJPEG     []byte
 	DeviceReport  fraud.DeviceIntegrityReport
+	DeviceID      string
 	IsOfflineSync bool
 	OfflineQueued *time.Time
 }
@@ -44,12 +45,17 @@ type SubmitPunchHandler struct {
 	Checker    geofence.GeofenceChecker
 	Validator  domainpunch.PunchValidator
 	Fraud      fraud.FraudEvaluator
+	Lockout    *fraud.DeviceLockoutTracker
 	Clock      func() time.Time
 }
 
 // Handle runs the SubmitPunch use case end-to-end.
 func (h SubmitPunchHandler) Handle(ctx context.Context, cmd SubmitPunchCommand) (*SubmitPunchResult, error) {
 	serverTime := h.now()
+
+	if h.isDeviceLocked(cmd.DeviceID, serverTime) {
+		return nil, ErrDeviceLocked
+	}
 
 	emp, err := h.Employees.GetEmployee(ctx, cmd.TenantID, cmd.EmployeeID)
 	if err != nil {
@@ -123,6 +129,8 @@ func (h SubmitPunchHandler) Handle(ctx context.Context, cmd SubmitPunchCommand) 
 		return nil, fmt.Errorf("persist punch: %w", err)
 	}
 
+	h.recordDeviceRejection(cmd.DeviceID, serverTime, record.Status)
+
 	return &SubmitPunchResult{
 		Record:     record,
 		FraudFlags: fraudResult.Flags,
@@ -150,6 +158,20 @@ func (h SubmitPunchHandler) validator() domainpunch.PunchValidator {
 
 func (h SubmitPunchHandler) fraudEval() fraud.FraudEvaluator {
 	return h.Fraud
+}
+
+func (h SubmitPunchHandler) isDeviceLocked(deviceID string, at time.Time) bool {
+	if h.Lockout == nil || deviceID == "" {
+		return false
+	}
+	return h.Lockout.IsLocked(deviceID, at)
+}
+
+func (h SubmitPunchHandler) recordDeviceRejection(deviceID string, at time.Time, status domainpunch.PunchStatus) {
+	if h.Lockout == nil || deviceID == "" || status != domainpunch.PunchStatusRejected {
+		return
+	}
+	h.Lockout.RecordRejected(deviceID, at)
 }
 
 func (h SubmitPunchHandler) resolveBiometric(

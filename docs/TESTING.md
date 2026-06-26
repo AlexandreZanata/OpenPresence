@@ -62,7 +62,20 @@ Manual verification:
 
 ```bash
 ./scripts/verify-fraud.sh
+./scripts/verify-fraud-e2e.sh
 ```
+
+## Fraud E2E tests — SubmitPunch integration (Go)
+
+Implemented in `services/attendance/internal/application/punch/submit_punch_fraud_e2e_integration_test.go`:
+
+| Test | Rule |
+|------|------|
+| `TestSubmitPunch_E2E_Fraud_BR012_VPN_SUSPICIOUSInDB` | BR-012 VPN → SUSPICIOUS persisted |
+| `TestSubmitPunch_E2E_Fraud_BR012_CriticalClock_REJECTED` | BR-012 critical fraud → REJECTED |
+| `TestSubmitPunch_E2E_Fraud_BR013_DeviceLockoutAfterThreeRejects` | BR-013 lockout after 3 rejects |
+
+`SubmitPunchHandler` wires `DeviceLockoutTracker` via optional `Lockout` field and `DeviceID` on the command.
 
 ## Domain tests — Hierarchy authorization (Go)
 

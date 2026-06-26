@@ -8,4 +8,5 @@ var (
 	ErrNoActivePlacement  = errors.New("punch: no active primary placement")
 	ErrPunchTypeNotAllowed = errors.New("punch: punch type not allowed by policy")
 	ErrBiometricRequired  = errors.New("punch: biometric verification required")
+	ErrDeviceLocked       = errors.New("punch: device locked due to repeated rejections")
 )

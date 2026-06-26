@@ -42,6 +42,7 @@ type integrationOpts struct {
 	biometric apppunch.BiometricClient
 	clock     func() time.Time
 	zones     []geofence.GeofenceZone
+	lockout   *fraud.DeviceLockoutTracker
 }
 
 func defaultIntegrationOpts() integrationOpts {
@@ -111,6 +112,7 @@ func newIntegrationEnvWithOpts(t *testing.T, opts integrationOpts) integrationEn
 		Punches:   punchRepo,
 		Validator: domainpunch.PunchValidator{},
 		Fraud:     fraud.FraudEvaluator{},
+		Lockout:   opts.lockout,
 		Clock:     opts.clock,
 	}
 
