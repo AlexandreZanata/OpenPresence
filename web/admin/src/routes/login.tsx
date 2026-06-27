@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   createFileRoute,
   redirect,
@@ -17,9 +18,6 @@ export const Route = createFileRoute('/login')({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
   beforeLoad: ({ context, search }) => {
-    if (context.auth.isLoading) {
-      return
-    }
     if (context.auth.isAuthenticated) {
       throw redirect({ to: search.redirect ?? '/dashboard' })
     }
@@ -32,6 +30,11 @@ function LoginPage() {
   const { redirect: redirectTo } = Route.useSearch()
   const navigate = useNavigate()
   const router = useRouter()
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
 
   function onSuccess() {
     const target = redirectTo ?? '/dashboard'
@@ -47,7 +50,7 @@ function LoginPage() {
       <div style={styles.card}>
         <h1 style={styles.title}>OpenPresence Admin</h1>
         <p style={styles.subtitle}>Sign in with your registration ID</p>
-        {auth.isLoading ? (
+        {!hydrated ? (
           <p>Loading session…</p>
         ) : (
           <LoginForm auth={auth} onSuccess={onSuccess} />

@@ -19,7 +19,16 @@ npm run dev
 
 Open http://localhost:5174
 
-Mock login (when `VITE_AUTH_MOCK=true`): registration `admin` / password `admin`.
+Mock login (when `VITE_AUTH_MOCK=true`):
+
+| Registration | Password | Role |
+|--------------|----------|------|
+| `admin` | `admin` | ORG_ADMIN |
+| `manager` | `manager` | MANAGER |
+| `hr` | `hr` | HR_ANALYST |
+| `auditor` | `auditor` | AUDITOR |
+
+Credentials are listed on the login screen in dev mock mode. DB seed: `./scripts/seed-dev-users.sh`.
 
 ## Auth (admin-02)
 
@@ -78,6 +87,8 @@ Post-login layout via `AdminShell`: sidebar (Dashboard + future modules), header
 |----------|---------|-------------|
 | `VITE_API_BASE_URL` | `http://127.0.0.1:8088` | Attendance / API gateway base URL |
 | `VITE_AUTH_MOCK` | `true` | Dev mock login until auth service exists |
+
+Browser requests require CORS on the attendance API. Local dev sets `CORS_ALLOWED_ORIGINS=http://localhost:5174,http://127.0.0.1:5174` via `./scripts/dev-backend.sh`.
 
 ## Verification
 

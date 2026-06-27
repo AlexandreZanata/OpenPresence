@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { ApiError } from '~/lib/api/client'
+import { isAuthMockEnabled } from '~/lib/env'
 import type { AuthState } from '~/lib/auth/types'
 import { FieldError } from './FieldError'
+import { MockCredentialsHint } from './MockCredentialsHint'
 import { loginPageStyles as styles } from './form-styles'
 
 type LoginFormValues = {
@@ -62,6 +64,16 @@ export function LoginForm({ auth, onSuccess }: Props) {
       }}
       noValidate
     >
+      {isAuthMockEnabled() ? (
+        <MockCredentialsHint
+          onPick={(registrationId, password) => {
+            form.setFieldValue('registrationId', registrationId)
+            form.setFieldValue('password', password)
+            setApiError(null)
+          }}
+        />
+      ) : null}
+
       <form.Field
         name="registrationId"
         validators={{ onChange: ({ value }) => required(value) }}

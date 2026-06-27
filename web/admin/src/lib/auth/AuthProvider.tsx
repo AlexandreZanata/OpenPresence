@@ -17,19 +17,18 @@ import type { AuthState, LoginCredentials } from './types'
 
 const AuthContext = createContext<AuthState | null>(null)
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthState['user']>(null)
-  const [tokens, setTokens] = useState<AuthState['tokens']>(null)
-  const [isLoading, setIsLoading] = useState(true)
+function readInitialAuth(): Pick<AuthState, 'user' | 'tokens'> {
+  const session = loadStoredSession()
+  if (!session) {
+    return { user: null, tokens: null }
+  }
+  return { user: session.user, tokens: session.tokens }
+}
 
-  useEffect(() => {
-    const session = loadStoredSession()
-    if (session) {
-      setUser(session.user)
-      setTokens(session.tokens)
-    }
-    setIsLoading(false)
-  }, [])
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [initialAuth] = useState(readInitialAuth)
+  const [user, setUser] = useState(initialAuth.user)
+  const [tokens, setTokens] = useState(initialAuth.tokens)
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     const result = await loginRequest(credentials)
@@ -49,11 +48,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       tokens,
       isAuthenticated: user !== null && tokens !== null,
-      isLoading,
+      isLoading: false,
       login,
       logout,
     }),
-    [user, tokens, isLoading, login, logout],
+    [user, tokens, login, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

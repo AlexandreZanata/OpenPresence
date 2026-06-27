@@ -56,6 +56,17 @@ else
 fi
 
 echo
+echo "--- CORS preflight (admin dev origin) ---"
+CORS_HEADERS="$(curl -sI -X OPTIONS "${ATTENDANCE_URL}/health/live" \
+  -H "Origin: http://localhost:5174" \
+  -H "Access-Control-Request-Method: GET" 2>/dev/null | tr -d '\r')"
+if echo "$CORS_HEADERS" | grep -qi "access-control-allow-origin: http://localhost:5174"; then
+  pass "OPTIONS /health/live allows admin origin"
+else
+  fail "CORS headers missing (restart backend: ./scripts/dev-backend.sh stop && start)"
+fi
+
+echo
 echo "--- biometric gRPC port ${BIOMETRIC_PORT} ---"
 if is_listening "$BIOMETRIC_PORT"; then
   pass "biometric port listening"

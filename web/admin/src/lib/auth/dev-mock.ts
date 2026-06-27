@@ -1,31 +1,32 @@
 import { ApiError } from '~/lib/api/errors'
 import { createMockAccessToken } from './jwt'
-import type { AuthRole, LoginCredentials, LoginResult } from './types'
-
-const MOCK_REGISTRATION = 'admin'
-const MOCK_PASSWORD = 'admin'
+import { DEV_MOCK_USERS } from './dev-users'
+import type { LoginCredentials, LoginResult } from './types'
 
 export async function mockLogin(credentials: LoginCredentials): Promise<LoginResult> {
-  if (
-    credentials.registrationId !== MOCK_REGISTRATION ||
-    credentials.password !== MOCK_PASSWORD
-  ) {
+  const match = DEV_MOCK_USERS.find(
+    (user) =>
+      user.registrationId === credentials.registrationId &&
+      user.password === credentials.password,
+  )
+
+  if (!match) {
     throw new ApiError('UNAUTHORIZED', 'Invalid registration ID or password', 401)
   }
 
   const user = {
-    id: '33333333-3333-3333-3333-333333333333',
-    tenantId: '11111111-1111-1111-1111-111111111111',
-    registrationId: MOCK_REGISTRATION,
-    roles: ['ORG_ADMIN'] as AuthRole[],
-    displayName: 'Admin User',
+    id: match.id,
+    tenantId: match.tenantId,
+    registrationId: match.registrationId,
+    roles: match.roles,
+    displayName: match.displayName,
   }
 
   return {
     user,
     tokens: {
       accessToken: createMockAccessToken(user),
-      refreshToken: 'mock-refresh-token',
+      refreshToken: `mock-refresh-${match.registrationId}`,
       expiresIn: 900,
     },
   }

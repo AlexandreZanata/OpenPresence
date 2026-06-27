@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Link, useRouter, useRouteContext } from '@tanstack/react-router'
 import './admin-shell.css'
@@ -7,12 +7,21 @@ type NavItem = {
   label: string
   to?: '/dashboard'
   disabled?: boolean
+  icon: ReactNode
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', to: '/dashboard' },
-  { label: 'Employees', disabled: true },
-  { label: 'Settings', disabled: true },
+const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
+  {
+    title: 'Overview',
+    items: [{ label: 'Dashboard', to: '/dashboard', icon: <IconDashboard /> }],
+  },
+  {
+    title: 'Management',
+    items: [
+      { label: 'Employees', disabled: true, icon: <IconUsers /> },
+      { label: 'Settings', disabled: true, icon: <IconSettings /> },
+    ],
+  },
 ]
 
 type Props = {
@@ -30,7 +39,7 @@ export function AdminShell({ children }: Props) {
   }
 
   return (
-    <div style={styles.app}>
+    <div className="admin-shell">
       {sidebarOpen ? (
         <div
           className="admin-shell-backdrop"
@@ -38,52 +47,74 @@ export function AdminShell({ children }: Props) {
           onClick={() => setSidebarOpen(false)}
         />
       ) : null}
-      <aside
-        className={`admin-shell-sidebar${sidebarOpen ? ' is-open' : ''}`}
-        style={styles.sidebar}
-      >
-        <div style={styles.brand}>OpenPresence</div>
-        <nav style={styles.nav}>
-          {NAV_ITEMS.map((item) =>
-            item.disabled ? (
-              <span key={item.label} style={styles.navDisabled} aria-disabled="true">
-                {item.label}
-              </span>
-            ) : (
-              <Link
-                key={item.label}
-                to={item.to!}
-                style={styles.navLink}
-                activeProps={{ style: styles.navLinkActive }}
-                onClick={() => setSidebarOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ),
-          )}
+
+      <aside className={`admin-shell-sidebar${sidebarOpen ? ' is-open' : ''}`}>
+        <div className="admin-shell-brand">
+          <div className="admin-shell-brand-mark" aria-hidden="true">
+            OP
+          </div>
+          <div className="admin-shell-brand-text">
+            <span className="admin-shell-brand-name">OpenPresence</span>
+            <span className="admin-shell-brand-sub">Admin panel</span>
+          </div>
+        </div>
+
+        <nav className="admin-shell-nav" aria-label="Main navigation">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.title} className="admin-shell-nav-section">
+              <p className="admin-shell-nav-label">{section.title}</p>
+              {section.items.map((item) =>
+                item.disabled ? (
+                  <span
+                    key={item.label}
+                    className="admin-shell-nav-item is-disabled"
+                    aria-disabled="true"
+                  >
+                    <span className="admin-shell-nav-icon">{item.icon}</span>
+                    <span className="admin-shell-nav-label-text">{item.label}</span>
+                    <span className="admin-shell-nav-badge">Soon</span>
+                  </span>
+                ) : (
+                  <Link
+                    key={item.label}
+                    to={item.to!}
+                    className="admin-shell-nav-item"
+                    activeProps={{ className: 'admin-shell-nav-item is-active' }}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <span className="admin-shell-nav-icon">{item.icon}</span>
+                    <span className="admin-shell-nav-label-text">{item.label}</span>
+                  </Link>
+                ),
+              )}
+            </div>
+          ))}
         </nav>
+
+        <div className="admin-shell-sidebar-footer">
+          Signed in as {auth.user?.displayName ?? 'user'}
+        </div>
       </aside>
 
-      <div style={styles.main}>
-        <header style={styles.header}>
+      <div className="admin-shell-main">
+        <header className="admin-shell-header">
           <button
             type="button"
             className="admin-shell-menu"
-            style={styles.menuButton}
             aria-label="Toggle navigation"
             onClick={() => setSidebarOpen((open) => !open)}
           >
             ☰
           </button>
-          <div style={styles.headerMeta}>
-            <span style={styles.userName}>{auth.user?.displayName ?? 'User'}</span>
-            <span style={styles.tenantId}>Tenant {shortId(auth.user?.tenantId)}</span>
+          <div className="admin-shell-header-meta">
+            <span className="admin-shell-user-name">{auth.user?.displayName ?? 'User'}</span>
+            <span className="admin-shell-tenant-id">Tenant {shortId(auth.user?.tenantId)}</span>
           </div>
-          <button type="button" style={styles.logoutButton} onClick={handleLogout}>
+          <button type="button" className="admin-shell-logout" onClick={handleLogout}>
             Sign out
           </button>
         </header>
-        <div style={styles.content}>{children}</div>
+        <div className="admin-shell-content">{children}</div>
       </div>
     </div>
   )
@@ -94,73 +125,53 @@ function shortId(id: string | undefined): string {
   return id.slice(0, 8)
 }
 
-const styles: Record<string, CSSProperties> = {
-  app: {
-    display: 'flex',
-    minHeight: '100vh',
-    fontFamily: 'system-ui, sans-serif',
-    background: '#f8fafc',
-    color: '#0f172a',
-  },
-  sidebar: {
-    width: 240,
-    background: '#0f172a',
-    color: '#e2e8f0',
-    padding: '1.25rem 1rem',
-    flexShrink: 0,
-    transition: 'transform 0.2s ease',
-  },
-  brand: {
-    fontWeight: 700,
-    fontSize: '1.1rem',
-    marginBottom: '1.5rem',
-    letterSpacing: '0.02em',
-  },
-  nav: { display: 'flex', flexDirection: 'column', gap: '0.35rem' },
-  navLink: {
-    display: 'block',
-    padding: '0.55rem 0.75rem',
-    borderRadius: 8,
-    color: '#cbd5e1',
-    textDecoration: 'none',
-  },
-  navLinkActive: {
-    background: '#1e293b',
-    color: '#fff',
-    fontWeight: 600,
-  },
-  navDisabled: {
-    display: 'block',
-    padding: '0.55rem 0.75rem',
-    borderRadius: 8,
-    color: '#64748b',
-    cursor: 'not-allowed',
-  },
-  main: { flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-    padding: '0.85rem 1.25rem',
-    background: '#fff',
-    borderBottom: '1px solid #e2e8f0',
-  },
-  menuButton: {
-    border: '1px solid #cbd5e1',
-    background: '#fff',
-    borderRadius: 6,
-    padding: '0.35rem 0.6rem',
-    cursor: 'pointer',
-  },
-  headerMeta: { flex: 1, display: 'flex', flexDirection: 'column', gap: '0.15rem' },
-  userName: { fontWeight: 600 },
-  tenantId: { fontSize: '0.85rem', color: '#64748b' },
-  logoutButton: {
-    border: '1px solid #cbd5e1',
-    background: '#fff',
-    borderRadius: 6,
-    padding: '0.45rem 0.85rem',
-    cursor: 'pointer',
-  },
-  content: { flex: 1, padding: '1.5rem' },
+function IconDashboard() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.75" />
+      <rect x="13" y="3" width="8" height="5" rx="1.5" stroke="currentColor" strokeWidth="1.75" />
+      <rect x="13" y="10" width="8" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.75" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.75" />
+    </svg>
+  )
+}
+
+function IconUsers() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="9" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.75" />
+      <path
+        d="M4 19c0-2.76 2.24-5 5-5s5 2.24 5 5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M16 11.5a2.5 2.5 0 1 0 0-5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M19 19c0-2.21-1.57-4.05-3.65-4.47"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function IconSettings() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.75" />
+      <path
+        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
 }

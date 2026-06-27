@@ -1,12 +1,9 @@
 import { Outlet, createFileRoute, redirect, useNavigate, useRouteContext } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AdminShell } from '~/components/AdminShell'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context, location }) => {
-    if (context.auth.isLoading) {
-      return
-    }
     if (!context.auth.isAuthenticated) {
       throw redirect({
         to: '/login',
@@ -20,22 +17,23 @@ export const Route = createFileRoute('/_authenticated')({
 function AuthenticatedLayout() {
   const { auth } = useRouteContext({ from: '__root__' })
   const navigate = useNavigate()
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
+    setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (hydrated && !auth.isAuthenticated) {
       void navigate({
         to: '/login',
         search: { redirect: window.location.href },
       })
     }
-  }, [auth.isLoading, auth.isAuthenticated, navigate])
+  }, [hydrated, auth.isAuthenticated, navigate])
 
-  if (auth.isLoading) {
+  if (!hydrated || !auth.isAuthenticated) {
     return <p style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>Loading session…</p>
-  }
-
-  if (!auth.isAuthenticated) {
-    return null
   }
 
   return (

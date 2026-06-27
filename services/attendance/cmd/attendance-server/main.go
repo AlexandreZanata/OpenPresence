@@ -39,7 +39,9 @@ func main() {
 		Biometric: app.BiometricGRPCAdapter{Client: bioClient},
 	})
 	handler := &httpapi.PunchHandler{Submit: stack.Handler}
-	srv := &http.Server{Addr: addr, Handler: httpapi.NewMux(handler)}
+	mux := httpapi.NewMux(handler)
+	corsOrigins := httpapi.ParseAllowedOrigins(envOr("CORS_ALLOWED_ORIGINS", ""))
+	srv := &http.Server{Addr: addr, Handler: httpapi.WithCORS(corsOrigins, mux)}
 
 	go func() {
 		log.Printf("attendance HTTP listening on %s", addr)

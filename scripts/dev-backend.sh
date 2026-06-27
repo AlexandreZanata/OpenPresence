@@ -23,6 +23,7 @@ BIOMETRIC_LOG="${PID_DIR}/biometric.log"
 
 ATTENDANCE_URL="${ATTENDANCE_HTTP_URL:-http://127.0.0.1:8088}"
 BIOMETRIC_GRPC="${BIOMETRIC_GRPC_ADDR:-127.0.0.1:9090}"
+CORS_ORIGINS="${CORS_ALLOWED_ORIGINS:-http://localhost:5174,http://127.0.0.1:5174}"
 DATABASE_URL="${DATABASE_URL:-postgres://attendance_app:attendance_app@127.0.0.1:5433/openpresence?sslmode=disable}"
 
 mkdir -p "$PID_DIR"
@@ -137,6 +138,13 @@ cmd_start() {
   echo "Starting Postgres (docker)..."
   docker compose -f "$COMPOSE_FILE" up -d postgres --wait
 
+  echo "Seeding dev admin users..."
+  if bash "${ROOT}/scripts/seed-dev-users.sh"; then
+    echo "OK: dev admin users seeded"
+  else
+    echo "WARN: dev admin user seed failed (non-fatal)" >&2
+  fi
+
   local grpc_port biometrics_http_port http_port
   grpc_port="$(biometric_port)"
   biometrics_http_port=$((grpc_port + 1))
@@ -157,6 +165,7 @@ cmd_start() {
   nohup bash -c "cd '${ROOT}/services/attendance' && exec env \
     DATABASE_URL='${DATABASE_URL}' \
     BIOMETRIC_GRPC_ADDR='${BIOMETRIC_GRPC}' \
+    CORS_ALLOWED_ORIGINS='${CORS_ORIGINS}' \
     ATTENDANCE_HTTP_ADDR=':${http_port}' \
     go run ./cmd/attendance-server" >>"$ATTENDANCE_LOG" 2>&1 &
   echo $! >"$ATTENDANCE_PID"

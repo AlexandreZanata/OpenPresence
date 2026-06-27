@@ -18,6 +18,7 @@ export const Route = createRootRouteWithContext<{
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: 'OpenPresence Admin' },
     ],
+    links: [{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
   }),
   component: RootComponent,
 })
