@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect, useNavigate, useRouteContext } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import { AdminShell } from '~/components/AdminShell'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context, location }) => {
@@ -37,5 +38,9 @@ function AuthenticatedLayout() {
     return null
   }
 
-  return <Outlet />
+  return (
+    <AdminShell>
+      <Outlet />
+    </AdminShell>
+  )
 }

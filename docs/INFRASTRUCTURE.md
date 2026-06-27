@@ -29,7 +29,7 @@ Admin panel (planned `web/admin/`): `VITE_API_BASE_URL=http://127.0.0.1:8088`
 cd web/admin && cp .env.example .env.local && npm install && npm run dev
 ```
 
-See `web/admin/README.md`. Verify: `./scripts/verify-admin-scaffold.sh`, `./scripts/verify-admin-auth.sh`, `./scripts/verify-admin-login.sh`, `./scripts/verify-admin-guards.sh`.
+See `web/admin/README.md`. Verify: `./scripts/verify-admin-scaffold.sh`, `./scripts/verify-admin-auth.sh`, `./scripts/verify-admin-login.sh`, `./scripts/verify-admin-guards.sh`, `./scripts/verify-admin.sh`.
 
 Manual verification:
 

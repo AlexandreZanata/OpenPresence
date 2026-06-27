@@ -36,6 +36,7 @@ npm run auth-smoke
 ./scripts/verify-admin-auth.sh
 ./scripts/verify-admin-login.sh
 ./scripts/verify-admin-guards.sh
+./scripts/verify-admin.sh
 ```
 
 ## Login (`/login`)
@@ -48,6 +49,19 @@ Protected routes live under pathless layout `_authenticated` (`src/routes/_authe
 
 ```bash
 ./scripts/verify-admin-guards.sh
+```
+
+## Admin shell (admin-05)
+
+Post-login layout via `AdminShell`: sidebar (Dashboard + future modules), header with user/tenant, sign out. Dashboard polls `GET /health/live` with TanStack Query.
+
+| Module | Purpose |
+|--------|---------|
+| `src/components/AdminShell.tsx` | Sidebar, header, content slot |
+| `src/lib/api/health.ts` | Live health probe |
+
+```bash
+./scripts/verify-admin.sh
 ```
 
 ## Scripts
